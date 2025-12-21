@@ -32,10 +32,14 @@
     hello
     rose-pine-cursor
     lm_sensors
+    gamescope
+    mesa
+    (callPackage ./nixpkgs/gamescope-session-steam/default.nix { })
   ];
 
   services.displayManager.ly.enable = true;
   programs.hyprland.enable = true;
+  programs.steam.enable = true;
 
   networking.firewall.enable = false;
   
@@ -47,6 +51,10 @@
   ];
 
   nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];
+
+  nixpkgs.config.allowUnfree = true;
+
+  hardware.opengl.enable = true;
 
 }
 
