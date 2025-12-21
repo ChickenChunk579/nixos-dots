@@ -23,6 +23,7 @@
       gnome-tweaks
       gh
       nixfmt
+      python3
     ];
     
     username = "rhys";

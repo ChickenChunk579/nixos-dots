@@ -1,6 +1,18 @@
 { config, lib, pkgs, ... }:
 
 {
+  imports = [
+    (
+      # Put the most recent revision here:
+      let revision = "bb53a85db9210204a98f771f10f1f5b4e06ccb2d"; in
+      builtins.fetchTarball {
+        url = "https://github.com/Jovian-Experiments/Jovian-NixOS/archive/${revision}.tar.gz";
+        # Update the hash as needed:
+        sha256 = "sha256:0ybg3bcyspayj9l8003iyqj5mphmivw8q6s5d1n2r6mdr99il5za";
+      } + "/modules"
+    )
+  ];
+
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
@@ -33,11 +45,11 @@
     rose-pine-cursor
     lm_sensors
     gamescope
+    gamescope-session
     mesa
-    (callPackage ./nixpkgs/gamescope-session-steam/default.nix { })
   ];
 
-  services.displayManager.ly.enable = true;
+  #services.displayManager.ly.enable = true;
   programs.hyprland.enable = true;
   programs.steam.enable = true;
 
@@ -55,6 +67,18 @@
   nixpkgs.config.allowUnfree = true;
 
   hardware.opengl.enable = true;
+  
+  jovian.steam.enable = true;
 
+  jovian.steam.autoStart = true;
+
+  jovian.steam.desktopSession = "hyprland";
+
+  jovian.steam.user = "rhys";
+
+  virtualisation.waydroid = {
+    enable = true;
+    package = pkgs.waydroid-nftables;
+  };
 }
 
