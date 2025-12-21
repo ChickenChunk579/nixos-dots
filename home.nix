@@ -1,4 +1,4 @@
-{ libs, pkgs, ... }:
+{ libs, pkgs, inputs, ... }:
 {
   home = {
     packages = with pkgs; [
@@ -24,8 +24,13 @@
       gh
       nixfmt
       python3
+      meson
+      ninja
+      glm
+      libpulseaudio
+      pkg-config
+      cmake
     ];
-    
     username = "rhys";
     homeDirectory = "/home/rhys";
 

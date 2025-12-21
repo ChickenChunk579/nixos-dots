@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -29,7 +29,7 @@
 
   users.users.rhys = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "input" ];
     packages = with pkgs; [
       tree
     ];
@@ -49,6 +49,8 @@
 
   programs.hyprland.enable = true;
   programs.steam.enable = true;
+  programs.steam.extest.enable = true;
+  programs.xwayland.enable = true;
 
   networking.firewall.enable = false;
   

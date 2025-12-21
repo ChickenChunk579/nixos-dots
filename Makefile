@@ -1,6 +1,6 @@
 .PHONY: update-flake update-dots update
 
-SYSTEM = xc895
+SYSTEM = steamdeck-oled
 
 update-dots:
 	cp dotfiles/.bashrc ~/.bashrc
