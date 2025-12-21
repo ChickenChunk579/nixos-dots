@@ -5,7 +5,9 @@ My personal NixOS dotfiles using Flakes and Home Manager.
 1. Partition and format disks
 2. Mount all mountpoints relative to /mnt
 3. Clone this repository to /etc/nixos
-3. Run `sudo nixos-generate-config --show-hardware-config --root /mnt` and copy the content into `hardware-config.nix`
+3. Run `sudo nixos-generate-config --show-hardware-config --root /mnt` and copy the content into a new file in `hw-configs` and give it an identifier.
+4. Edit `Makefile` to change the system variable to the name of the file in hw-configs
+5. Edit flake.nix to add a new configuration with the same name as your new hardware configuration, and include your new hardware config in that system.
 4. Run `sudo nixos-install --flake /mnt/etc/nixos#nixos` to install the system
 5. Reboot into the Installation
 6. Switch to tty2 and log in as root

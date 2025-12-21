@@ -1,11 +1,6 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
-
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
@@ -50,6 +45,8 @@
     nerd-fonts.jetbrains-mono
     nerd-fonts.roboto-mono
   ];
+
+  nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];
 
 }
 

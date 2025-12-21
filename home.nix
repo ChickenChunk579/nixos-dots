@@ -22,6 +22,7 @@
       kdePackages.qtstyleplugin-kvantum
       gnome-tweaks
       gh
+      nixfmt
     ];
     
     username = "rhys";

@@ -10,25 +10,28 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs =
+    { nixpkgs, home-manager, ... }:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-    in {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+    in
+    {
+      nixosConfigurations.xc895 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
 
-	modules = [
+        modules = [
+          ./hw-configs/xc895.nix
           ./configuration.nix
 
-	  home-manager.nixosModules.home-manager
-	  {
-	    home-manager.useGlobalPkgs = true;
-	    home-manager.useUserPackages = true;
-	    home-manager.users.rhys = import ./home.nix;
-	  }
-	];
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.rhys = import ./home.nix;
+          }
+        ];
       };
     };
 }
