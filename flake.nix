@@ -31,6 +31,36 @@
             home-manager.useUserPackages = true;
             home-manager.users.rhys = import ./home.nix;
           }
+          {
+            services.displayManager.ly.enable = true;
+          }
+        ];
+      };
+
+      nixosConfigurations.xc895-deck = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+
+        modules = [
+          ./hw-configs/xc895.nix
+          ./configuration.nix
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.rhys = import ./home.nix;
+          }
+          {
+            jovian.steam.enable = true;
+            jovian.steam.autoStart = true;
+            jovian.steam.desktopSession = "hyprland";
+            jovian.steam.user = "rhys";
+
+            environment.systemPackages = with pkgs; [
+              gamescope
+              gamescope-session
+            ];
+          }
         ];
       };
     };

@@ -44,12 +44,9 @@
     hello
     rose-pine-cursor
     lm_sensors
-    gamescope
-    gamescope-session
     mesa
   ];
 
-  #services.displayManager.ly.enable = true;
   programs.hyprland.enable = true;
   programs.steam.enable = true;
 
@@ -67,14 +64,6 @@
   nixpkgs.config.allowUnfree = true;
 
   hardware.opengl.enable = true;
-  
-  jovian.steam.enable = true;
-
-  jovian.steam.autoStart = true;
-
-  jovian.steam.desktopSession = "hyprland";
-
-  jovian.steam.user = "rhys";
 
   virtualisation.waydroid = {
     enable = true;
