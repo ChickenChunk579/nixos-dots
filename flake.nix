@@ -38,7 +38,10 @@
             jovian.steam.enable = true;
             jovian.steam.autoStart = true;
             jovian.steam.desktopSession = "hyprland";
-            jovian.steam.user = "rhys";
+            jovian.steam.user = "rhys"; 
+            jovian.decky-loader.enable = true;
+            jovian.decky-loader.user = "rhys";
+
 
             jovian.devices.steamdeck.enable = true;
           }

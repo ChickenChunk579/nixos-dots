@@ -30,6 +30,7 @@
       libpulseaudio
       pkg-config
       cmake
+      steamtinkerlaunch
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
