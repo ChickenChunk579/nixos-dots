@@ -31,6 +31,8 @@
       pkg-config
       cmake
       steamtinkerlaunch
+      xorg.xdpyinfo
+      cage
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
