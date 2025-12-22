@@ -94,5 +94,7 @@
     enable = true;
     package = pkgs.waydroid-nftables;
   };
+
+  services.flatpak.enable = true;
 }
 

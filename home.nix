@@ -34,6 +34,13 @@
       xorg.xdpyinfo
       cage
       wlr-randr
+      xfce.thunar
+      p7zip
+      xarchiver
+      kdePackages.discover
+      wine
+      unarc
+
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
