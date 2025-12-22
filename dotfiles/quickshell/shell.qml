@@ -14,6 +14,7 @@ ShellRoot {
     property color colMuted: "#6e6a86"
     property color colCyan: "#9ccfd8"
     property color colPurple: "#c4a7e7"
+    property color colDarkPurple: "#907aa9"
     property color colRed: "#eb6f92"
     property color colYellow: "#f6c177"
     property color colBlue: "#3e8fb0"
@@ -251,6 +252,7 @@ ShellRoot {
         PanelWindow {
             property var modelData
             screen: modelData
+            color: "transparent"
 
             anchors {
                 top: true
@@ -259,18 +261,21 @@ ShellRoot {
             }
 
             implicitHeight: 30
-            color: root.colBg
 
             margins {
-                top: 0
-                bottom: 0
-                left: 0
-                right: 0
+                top: 6
+                bottom: 6
+                left: 6
+                right: 6
             }
 
             Rectangle {
                 anchors.fill: parent
                 color: root.colBg
+                radius: 10
+
+                border.color: root.colDarkPurple
+                border.width: 2
 
                 RowLayout {
                     anchors.fill: parent
@@ -294,7 +299,7 @@ ShellRoot {
 
                             Text {
                                 text: index + 1
-                                color: parent.isActive ? root.colCyan : (parent.hasWindows ? root.colCyan : root.colMuted)
+                                color: parent.isActive ? root.colPurple : (parent.hasWindows ? root.colDarkPurple : root.colMuted)
                                 font.pixelSize: root.fontSize
                                 font.family: root.fontFamily
                                 font.bold: true
@@ -303,8 +308,8 @@ ShellRoot {
 
                             Rectangle {
                                 width: 20
-                                height: 3
-                                color: parent.isActive ? root.colPurple : root.colBg
+                                height: 2
+                                color: parent.isActive ? root.colPurple : root.colDarkPurple
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.bottom: parent.bottom
                             }
@@ -338,8 +343,8 @@ ShellRoot {
                     }
 
                     Text {
-                        text: kernelVersion
-                        color: root.colRed
+                        text: " " + kernelVersion
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
@@ -356,8 +361,8 @@ ShellRoot {
                     }
 
                     Text {
-                        text: "CPU: " + cpuUsage + "%"
-                        color: root.colYellow
+                        text: " " + cpuUsage + "%"
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
@@ -376,7 +381,7 @@ ShellRoot {
                     Text {
                         visible: hasCpuTemp
                         text: cpuTemperature
-                        color: root.colYellow
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
@@ -396,7 +401,7 @@ ShellRoot {
                     Text {
                         visible: hasBattery
                         text: batteryPercent + "%"
-                        color: root.colYellow
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
@@ -414,8 +419,8 @@ ShellRoot {
                     }
 
                     Text {
-                        text: "Mem: " + memUsage + "%"
-                        color: root.colCyan
+                        text: " " + memUsage + "%"
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
@@ -432,8 +437,8 @@ ShellRoot {
                     }
 
                     Text {
-                        text: "Disk: " + diskUsage + "%"
-                        color: root.colBlue
+                        text: " " + diskUsage + "%"
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
@@ -450,7 +455,7 @@ ShellRoot {
                     }
 
                     Text {
-                        text: "Vol: " + volumeLevel + "%"
+                        text: " " + volumeLevel + "%"
                         color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
@@ -475,7 +480,7 @@ ShellRoot {
                     Text {
                         id: clockText
                         text: Qt.formatDateTime(new Date(), "ddd, MMM dd - HH:mm")
-                        color: root.colCyan
+                        color: root.colPurple
                         font.pixelSize: root.fontSize
                         font.family: root.fontFamily
                         font.bold: true
