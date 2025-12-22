@@ -36,6 +36,14 @@ ShellRoot {
     property var lastCpuTotal: 0
     property var cpuTemperature: "0.0"
 
+    // Availability flags
+    property bool hasCpuTemp: false
+    property bool hasBattery: false
+
+    // Battery
+    property int batteryPercent: 0
+
+
     // Kernel version
     Process {
         id: kernelProc
@@ -173,15 +181,30 @@ ShellRoot {
         command: ["sh", "-c", "/home/rhys/.config/quickshell/temp.sh"]
         stdout: SplitParser {
             onRead: data => {
-                console.log("CPU Temp Data:", data);  // Add logging to check if output is received
-                if (data) {
-                    cpuTemperature = data.trim();  // Ensure you trim any extra whitespace
+                if (!data || data.trim().length === 0) {
+                    hasCpuTemp = false;
+                    return;
                 }
+
+                cpuTemperature = data.trim();
+                hasCpuTemp = true;
             }
         }
-        Component.onCompleted: {
-            console.log("Starting CPU Temperature Process");
-            running = true;  // Ensure the process starts
+    }
+
+    Process {
+        id: batteryProc
+        command: ["sh", "-c", "cat /sys/class/power_supply/BAT1/capacity 2>/dev/null"]
+        stdout: SplitParser {
+            onRead: data => {
+                if (!data || isNaN(parseInt(data))) {
+                    hasBattery = false;
+                    return;
+                }
+
+                batteryPercent = parseInt(data);
+                hasBattery = true;
+            }
         }
     }
 
@@ -197,6 +220,7 @@ ShellRoot {
             diskProc.running = true;
             volProc.running = true;
             cpuTempProc.running = true;
+            batteryProc.running = true;
         }
     }
 
@@ -350,6 +374,7 @@ ShellRoot {
                     }
 
                     Text {
+                        visible: hasCpuTemp
                         text: cpuTemperature
                         color: root.colYellow
                         font.pixelSize: root.fontSize
@@ -359,6 +384,27 @@ ShellRoot {
                     }
 
                     Rectangle {
+                        visible: hasCpuTemp
+                        Layout.preferredWidth: 1
+                        Layout.preferredHeight: 16
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.leftMargin: 0
+                        Layout.rightMargin: 8
+                        color: root.colMuted
+                    }
+
+                    Text {
+                        visible: hasBattery
+                        text: batteryPercent + "%"
+                        color: root.colYellow
+                        font.pixelSize: root.fontSize
+                        font.family: root.fontFamily
+                        font.bold: true
+                        Layout.rightMargin: 8
+                    }
+
+                    Rectangle {
+                        visible: hasBattery
                         Layout.preferredWidth: 1
                         Layout.preferredHeight: 16
                         Layout.alignment: Qt.AlignVCenter
