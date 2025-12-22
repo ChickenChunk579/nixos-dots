@@ -33,6 +33,7 @@
       steamtinkerlaunch
       xorg.xdpyinfo
       cage
+      wlr-randr
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
