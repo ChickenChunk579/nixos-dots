@@ -40,7 +40,7 @@
       kdePackages.discover
       wine
       unarc
-
+      swayosd
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
