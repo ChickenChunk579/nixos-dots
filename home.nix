@@ -41,6 +41,7 @@
       wine
       unarc
       swayosd
+      clang-tools
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
