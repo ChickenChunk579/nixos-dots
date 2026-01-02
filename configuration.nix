@@ -50,9 +50,11 @@
     pulse.enable = true;
   };
 
+  users.groups.plugdev = {};
+
   users.users.rhys = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "input" ];
+    extraGroups = [ "wheel" "input" "plugdev" ];
     packages = with pkgs; [
       tree
     ];
@@ -68,6 +70,7 @@
     rose-pine-cursor
     lm_sensors
     mesa
+    distrobox
   ];
 
   programs.hyprland.enable = true;
@@ -96,5 +99,23 @@
   };
 
   services.flatpak.enable = true;
+
+  services.udev.extraRules = ''
+      SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1042", GROUP="plugdev", MODE="0660"
+  SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1102", GROUP="plugdev", MODE="0660"
+  SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1142", GROUP="plugdev", MODE="0660"
+  SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1205", GROUP="plugdev", MODE="0660"
+  '';
+
+  networking.extraHosts = ''
+1.2.3.4 claude.ai
+1.2.3.4 chatgpt.com
+  '';
+
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
+
 }
 

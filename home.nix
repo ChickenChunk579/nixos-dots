@@ -42,6 +42,7 @@
       unarc
       swayosd
       clang-tools
+      udev
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
