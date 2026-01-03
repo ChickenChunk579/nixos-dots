@@ -1,11 +1,9 @@
-@import "colors.css";
-
 window {
     margin: 0px;
-    background-color: var(--bg);
+    background-color: #232136;
     border-radius: 0px;
-    border: 2px solid var(--accent);
-    color: var(--fg);
+    border: 2px solid #eb6f92;
+    color: #e0def4;
     font-family: 'JetBrainsMono Nerd Font';
     font-size: 16px;
 }
@@ -14,22 +12,24 @@ window {
     margin: 5px;
     border-radius: 0px;
     border: none;
-    color: var(--accent);
-    background-color: var(--panel);
+    border-radius: 0px;;
+    color: #eb6f92;
+    background-color: #393552;
+    
 }
 
 #inner-box {
     margin: 5px;
     border: none;
-    background-color: var(--panel);
-    color: var(--bg);
+    background-color: #393552;
+    color: #232136;
     border-radius: 0px;
 }
 
 #outer-box {
     margin: 15px;
     border: none;
-    background-color: var(--bg);
+    background-color: #232136;
 }
 
 #scroll {
@@ -40,19 +40,19 @@ window {
 #text {
     margin: 5px;
     border: none;
-    color: var(--fg);
-}
+    color: #e0def4;
+} 
 
 #entry:selected {
-    background-color: var(--accent);
-    color: var(--bg);
-    border-radius: 0px;
+    background-color: #eb6f92;
+    color: #232136;
+    border-radius: 0px;;
     outline: none;
 }
 
 #entry:selected * {
-    background-color: var(--accent);
-    color: var(--bg);
-    border-radius: 0px;
+    background-color: #eb6f92;
+    color: #232136;
+    border-radius: 0px;;
     outline: none;
 }

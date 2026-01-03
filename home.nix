@@ -13,7 +13,7 @@
       quickshell
       jq
       pavucontrol
-      vscodium
+      vscode
       rose-pine-kvantum
       libsForQt5.qt5ct
       kdePackages.qt6ct
@@ -49,4 +49,10 @@
 
     stateVersion = "25.11";
   };
+
+  #programs.sm64ex = {
+  #  enable = true;
+  #  baserom = "/home/rhys/roms/baserom.us.z64";
+  #  region = "us";
+  #};
 }

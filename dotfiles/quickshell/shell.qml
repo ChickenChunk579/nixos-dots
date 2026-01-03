@@ -8,7 +8,6 @@ import QtQuick.Layouts
 ShellRoot {
     id: root
 
-    // Theme colors
     property color colBg: "#2a273f"
     property color colFg: "#e0def4"
     property color colMuted: "#6e6a86"
@@ -19,11 +18,9 @@ ShellRoot {
     property color colYellow: "#f6c177"
     property color colBlue: "#3e8fb0"
 
-    // Font
     property string fontFamily: "JetBrainsMono Nerd Font"
     property int fontSize: 14
 
-    // System info properties
     property string kernelVersion: "Linux"
     property int cpuUsage: 0
     property int memUsage: 0
@@ -32,20 +29,15 @@ ShellRoot {
     property string activeWindow: "Window"
     property string currentLayout: "Tile"
 
-    // CPU tracking
     property var lastCpuIdle: 0
     property var lastCpuTotal: 0
     property var cpuTemperature: "0.0"
 
-    // Availability flags
     property bool hasCpuTemp: false
     property bool hasBattery: false
 
-    // Battery
     property int batteryPercent: 0
 
-
-    // Kernel version
     Process {
         id: kernelProc
         command: ["uname", "-r"]
@@ -58,7 +50,6 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // CPU usage
     Process {
         id: cpuProc
         command: ["sh", "-c", "head -1 /proc/stat"]
@@ -92,7 +83,6 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // Memory usage
     Process {
         id: memProc
         command: ["sh", "-c", "free | grep Mem"]
@@ -109,7 +99,6 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // Disk usage
     Process {
         id: diskProc
         command: ["sh", "-c", "df / | tail -1"]
@@ -125,7 +114,6 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // Volume level (wpctl for PipeWire)
     Process {
         id: volProc
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
@@ -142,7 +130,6 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // Active window title
     Process {
         id: windowProc
         command: ["sh", "-c", "hyprctl activewindow -j | jq -r '.title // empty'"]
@@ -156,7 +143,6 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // Current layout (Hyprland: dwindle/master/floating)
     Process {
         id: layoutProc
         command: ["sh", "-c", "hyprctl activewindow -j | jq -r 'if .floating then \"Floating\" elif .fullscreen == 1 then \"Fullscreen\" else \"Tiled\" end'"]
@@ -170,13 +156,11 @@ ShellRoot {
         Component.onCompleted: running = true
     }
 
-    // pavu control waiter thing
     Process {
         id: pauvControlProc
         command: ["pavucontrol"]
     }
 
-    // CPU Temperature
     Process {
         id: cpuTempProc
         command: ["sh", "-c", "/home/rhys/.config/quickshell/temp.sh"]
