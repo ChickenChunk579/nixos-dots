@@ -77,6 +77,7 @@
   programs.steam.enable = true;
   programs.steam.extest.enable = true;
   programs.xwayland.enable = true;
+  programs.nix-ld.enable = true;
 
   networking.firewall.enable = false;
   
@@ -105,11 +106,6 @@
   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1102", GROUP="plugdev", MODE="0660"
   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1142", GROUP="plugdev", MODE="0660"
   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", ATTRS{idProduct}=="1205", GROUP="plugdev", MODE="0660"
-  '';
-
-  networking.extraHosts = ''
-1.2.3.4 claude.ai
-1.2.3.4 chatgpt.com
   '';
 
   virtualisation.podman = {

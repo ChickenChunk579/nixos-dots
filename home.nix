@@ -43,6 +43,9 @@
       swayosd
       clang-tools
       udev
+      classicube
+      osu-lazer-bin
+      mcpelauncher-client
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
