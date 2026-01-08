@@ -46,11 +46,24 @@
       classicube
       osu-lazer-bin
       mcpelauncher-client
+      ghidra-bin
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
 
     stateVersion = "25.11";
+  };
+
+  services.udiskie = {
+    enable = true;
+    settings = {
+        # workaround for
+        # https://github.com/nix-community/home-manager/issues/632
+        program_options = {
+            # replace with your favorite file manager
+            
+        };
+    };
   };
 
   #programs.sm64ex = {
