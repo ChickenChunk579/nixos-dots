@@ -1,4 +1,4 @@
-({ lib, pkgs, ... }: {
+{ lib, pkgs, ... }: {
   imports = [
     (
       # Put the most recent revision here:
@@ -20,5 +20,8 @@
   jovian.decky-loader.enable = true;
   jovian.steam.desktopSession = "hyprland-custom";
   services.displayManager.sddm.enable = lib.mkForce false;
-  home-manager.extraSpecialArgs.isDeck = true;
-})
+  
+  # Override isDeck to true for deck configurations
+  # This should merge with the existing extraSpecialArgs from configuration.nix
+  home-manager.extraSpecialArgs.isDeck = lib.mkForce true;
+}
