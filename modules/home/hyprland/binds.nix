@@ -34,6 +34,8 @@
       "$mod SHIFT, KP_SUBTRACT, exec, hyprctl -q keyword cursor:zoom_factor 1"
       "$mod SHIFT, 0, exec, hyprctl -q keyword cursor:zoom_factor 1"
       "$mod SHIFT, W, exec, bash ~/.config/hypr/scripts/wallpaper.sh"
+
+      ",Home , exec, /home/rhys/nix/menu.sh"
     ]
     ++ (
       # workspaces
