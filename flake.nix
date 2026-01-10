@@ -46,6 +46,7 @@
 
         modules = [
           ./configuration.nix
+          ./systems/alpha.nix
           home-manager.nixosModules.home-manager
           hyprland.nixosModules.default
         ];
@@ -61,29 +62,42 @@
 
         modules = [
           ./configuration.nix
-          ({ lib, pkgs, ... }: {
-            imports = [
-              (
-                # Put the most recent revision here:
-                let
-                  revision = "bb53a85db9210204a98f771f10f1f5b4e06ccb2d";
-                in
-                builtins.fetchTarball {
-                  url = "https://github.com/Jovian-Experiments/Jovian-NixOS/archive/${revision}.tar.gz";
-                  # Update the hash as needed:
-                  sha256 = "sha256:0ybg3bcyspayj9l8003iyqj5mphmivw8q6s5d1n2r6mdr99il5za";
-                }
-                + "/modules"
-              )
-            ];
+          ./systems/alpha.nix
+          ./steam.nix
+          home-manager.nixosModules.home-manager
+          hyprland.nixosModules.default
+        ];
+      };
 
-            jovian.steam.enable = true;
-            jovian.steam.autoStart = true;
-            jovian.steam.user = "rhys";
-            jovian.decky-loader.enable = true;
-            jovian.steam.desktopSession = "hyprland-custom";
-            services.displayManager.sddm.enable = lib.mkForce false;
-          })
+
+
+      nixosConfigurations.beta = nixpkgs.lib.nixosSystem {
+        inherit system;
+
+        specialArgs = {
+          inherit hyprland walker;
+        };
+
+        modules = [
+          ./configuration.nix
+          ./systems/beta.nix
+          home-manager.nixosModules.home-manager
+          hyprland.nixosModules.default
+        ];
+      };
+
+      # New system for the Deck using Jovian / Steam Deck UI.
+      nixosConfigurations.beta-deck = nixpkgs.lib.nixosSystem {
+        inherit system;
+
+        specialArgs = {
+          inherit hyprland walker jovian;
+        };
+
+        modules = [
+          ./configuration.nix
+          ./systems/beta.nix
+          ./steam.nix
           home-manager.nixosModules.home-manager
           hyprland.nixosModules.default
         ];
