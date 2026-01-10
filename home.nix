@@ -6,7 +6,7 @@
       kitty
       wofi
       waybar
-      hyprpaper
+      swww
       firefox
       clang
       starship
@@ -43,27 +43,13 @@
       swayosd
       clang-tools
       udev
-      classicube
-      osu-lazer-bin
-      mcpelauncher-client
-      ghidra-bin
+      inputs.matugen.packages.${system}.default
+      pywalfox-native
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
 
     stateVersion = "25.11";
-  };
-
-  services.udiskie = {
-    enable = true;
-    settings = {
-        # workaround for
-        # https://github.com/nix-community/home-manager/issues/632
-        program_options = {
-            # replace with your favorite file manager
-            
-        };
-    };
   };
 
   #programs.sm64ex = {

@@ -13,10 +13,14 @@
       url = "github:horriblename/hyprgrass";
       inputs.hyprland.follows = "hyprland"; # IMPORTANT
     };
+    matugen = {
+      url = "github:/InioX/matugen";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    { nixpkgs, home-manager , ... }:
+    { nixpkgs, home-manager , ... }@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -32,6 +36,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.rhys = import ./home.nix;
           }
           {
@@ -58,6 +63,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.rhys = import ./home.nix;
           }
           {
@@ -77,6 +83,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.rhys = import ./home.nix;
           }
           {
