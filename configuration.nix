@@ -65,10 +65,6 @@ in
       "plugdev"
     ];
   };
-<<<<<<< HEAD
-=======
-
->>>>>>> f829a94 (what the heck is happennig)
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
