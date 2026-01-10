@@ -1,7 +1,4 @@
-{ pkgs, config, ... }:
-let
-  isDeck = config.networking.hostName == "beta-deck";
-in
+{ pkgs, config, isDeck, ... }:
 {
   home.packages = with pkgs; [
     swww
