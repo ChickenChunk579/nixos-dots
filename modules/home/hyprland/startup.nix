@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
+let
+  isDeck = config.networking.hostName == "beta-deck";
+in
 {
   home.packages = with pkgs; [
     swww
@@ -10,5 +13,6 @@
     "dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP=Hyprland SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME"
     "swaync"
     "swayosd"
-  ];
+  ]
+  ++ pkgs.lib.optional isDeck "steam -silent";
 }
