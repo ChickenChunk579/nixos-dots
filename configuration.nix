@@ -73,6 +73,7 @@ in
     ];
     extraSpecialArgs = {
       inherit walker hyprland;
+      isDeck = false;
     };
     users.rhys = import ./modules/home/home.nix;
   };

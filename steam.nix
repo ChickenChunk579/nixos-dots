@@ -20,4 +20,5 @@
   jovian.decky-loader.enable = true;
   jovian.steam.desktopSession = "hyprland-custom";
   services.displayManager.sddm.enable = lib.mkForce false;
+  home-manager.extraSpecialArgs.isDeck = true;
 })
