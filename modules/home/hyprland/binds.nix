@@ -69,10 +69,10 @@
       ", XF86AudioPrev, exec, playerctl previous"
     ];
     bindel = [
-      ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+ && swayosd-client --input-volume=raise"
-      ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && swayosd-client --input-volume=lower"
+      ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+ && swayosd-client --output-volume=raise"
+      ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && swayosd-client --output-volume=lower"
       ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-      ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+      ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && swayosd-client --output-volume=mute-toggle"
       ",XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 5%+"
       ",XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 5%-"
       ",XF86PowerOff, exec, systemctl suspend"

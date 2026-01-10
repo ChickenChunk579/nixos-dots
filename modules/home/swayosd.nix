@@ -33,9 +33,23 @@
     window#osd progressbar {
       min-height: 6px;
       border-radius: 999px;
-      background: transparent;
       border: none;
     }
+
+    window#osd progressbar trough {
+      min-height: inherit;
+      border-radius: inherit;
+      border: none;
+      background-color: alpha(@color3, 0.3);
+    }
+
+    window#osd progressbar trough progress {
+      min-height: inherit;
+      border-radius: inherit;
+      border: none;
+      background-color: @color1;
+    }
+
 
     window#osd trough {
       min-height: inherit;
@@ -48,7 +62,7 @@
       min-height: inherit;
       border-radius: inherit;
       border: none;
-      background: @color1;
+      background: @color3;
     }
 
 
