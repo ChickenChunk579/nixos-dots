@@ -25,10 +25,6 @@ let
     '';
 in
 {
-  imports = [
-    ./hardware-configuration.nix
-  ];
-
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
@@ -142,4 +138,7 @@ in
   };
 
   services.flatpak.enable = true;
+
+  programs.steam.enable = true;
+  programs.steam.extest.enable = true;
 }

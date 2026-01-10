@@ -98,6 +98,9 @@
           ./configuration.nix
           ./systems/beta.nix
           ./steam.nix
+          {
+            jovian.devices.steamdeck.enable = true;
+          }
           home-manager.nixosModules.home-manager
           hyprland.nixosModules.default
         ];

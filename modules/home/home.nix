@@ -34,6 +34,7 @@
       cloc
       blanket
       obs-studio
+      github-cli
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
