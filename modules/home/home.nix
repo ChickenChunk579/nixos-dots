@@ -35,6 +35,7 @@
       blanket
       obs-studio
       github-cli
+      geeqie
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
