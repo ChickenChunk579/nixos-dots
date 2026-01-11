@@ -100,6 +100,10 @@ in
     };
   };
 
+  services.dbus.enable = true;
+  #services.dbus.socketActivated = true;
+
+
   networking.firewall.enable = false;
 
   system.stateVersion = "25.11";
