@@ -46,9 +46,8 @@
     }
 
     window#waybar {
-        background: @background;
+        background: @transparent;
         color: @foreground;
-        border: 2px solid @color1
     }
 
     /* --------------------------------------------------
@@ -83,7 +82,8 @@
     }
 
     #cpu, #memory, #temperature {
-        background: transparent;
+        background: @background;
+        border: 2px solid @color1; /* on_surface_variant -> light gray */
         box-shadow: none;
         margin: 4px 0;
         padding: 0;
@@ -145,6 +145,8 @@
 
     #pulseaudio, #battery {
         font-size: 10px;
+        background: @background;
+        border: 2px solid @color1; /* on_surface_variant -> light gray */
         padding: 8px 0;
     }
 

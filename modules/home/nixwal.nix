@@ -22,14 +22,14 @@
       # Update symlink to current wallpaper
       ln -sf "$WALLPAPER" "$SYMLINK"
 
-      pywal-spicetify
+      #pywal-spicetify
 
       ${pkgs.pywal}/bin/wal -i "$WALLPAPER" -n -s -t
       ${pkgs.swww}/bin/swww img "$WALLPAPER" \
         --transition-type grow \
         --transition-fps 90
       
-      pywal-spicetify Dribbblish
+      #pywal-spicetify Dribbblish
 
       pkill -SIGUSR2 waybar || true
       pywalfox update || true
@@ -37,6 +37,13 @@
 
       pkill swaync || true
       swaync & disown
+
+      until [ -f "$HOME/.cache/wal/colors" ]; do
+        sleep 0.1
+      done
+
+      (cd "$HOME/.local/bin" && ./pywal-obsidian "$HOME/Obsidian/")
+
 
     '';
     executable = true;
