@@ -8,6 +8,10 @@
       font-family: "RobotoMono Nerd Font";
       font-weight: bold;
       font-size: 16px;
+      background: transparent;
+      text-align: center;
+      border-radius: 0px;
+      box-sizing: border-box;
     }
 
     window#waybar {
@@ -24,6 +28,7 @@
     #cpu { background: @background; color: @foreground; border-radius: 8px; }
 
     #custom-power {background: @background; color: @foreground; border-radius: 8px;}
+    #pulseaudio {background: transparent;}
   '';*/
   style = ''
     @import url("file:///home/rhys/.cache/wal/colors-waybar.css");
@@ -159,6 +164,17 @@
     #custom-power:hover {
         color: @color11; /* error_container -> goldish accent */
     }
+
+    #pulseaudio,
+    #battery,
+    #custom-network,
+    #custom-notification {
+        padding: 4px 0;
+        margin: 2px 1px;
+    }
+
+
+
 
   '';
 }

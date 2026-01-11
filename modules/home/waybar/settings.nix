@@ -71,7 +71,7 @@
 
     "custom/ws" = { format = "  "; tooltip = false; min-length = 3; max-length = 3; };
     "custom/cpuinfo" = { exec = "~/.config/waybar/scripts/cpu-temp.sh"; return-type = "json"; interval = 5; };
-    memory = { states = { warning = 75; critical = 90; }; format = "  {percentage}% "; tooltip = true; interval = 5; };
+    memory = { states = { warning = 75; critical = 90; }; format = " {percentage}% "; tooltip = true; interval = 5; };
     "custom/cpu" = { exec = "~/.config/waybar/scripts/cpu-usage.sh"; return-type = "json"; interval = 5; };
     idle_inhibitor = { format = " "; tooltip = true; tooltip-format-activated = "Presentation Mode"; tooltip-format-deactivated = "Idle Mode"; };
     "clock#time" = { format = " 󱑂 {:%H:%M} "; tooltip-format = "Standard Time: {:%I:%M %p}"; };
@@ -81,10 +81,10 @@
     pulseaudio = { format = "  {volume}% "; format-muted = " 󰝟 {volume}% "; };
     "custom/backlight" = { exec = "~/.config/waybar/scripts/brightness-control.sh"; return-type = "json"; };
     battery = { format = "{icon} {capacity}%"; interval = 1; };
-    "custom/power" = { format = "   "; tooltip = false; on-click = "~/.config/waybar/scripts/logout-menu.sh"; };
+    "custom/power" = { format = "  "; tooltip = false; on-click = "~/.config/waybar/scripts/logout-menu.sh"; };
     "custom/paddw".format = " ";
 
-    "cpu".format = "  {usage}% ";
+    "cpu".format = " {usage}% ";
   }*/
   {
     # ---------------------------------------------------
