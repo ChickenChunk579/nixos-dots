@@ -19,10 +19,10 @@
     ./hypridle.nix
     ./nixwal.nix
     ./spicetify.nix
+    ./fastfetch.nix
   ];
   home = {
     packages = with pkgs; [
-      fastfetch
       starship
       gnumake
       localsend
