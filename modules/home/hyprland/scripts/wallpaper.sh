@@ -2,5 +2,5 @@
 wallpaper=$(ls ~/Wallpapers | walker --dmenu)
 
 if [[ -n "$wallpaper" ]]; then
-    ~/.local/bin/nixwal "$HOME/Wallpapers/$wallpaper"
+    ~/.nix-profile/bin "$HOME/Wallpapers/$wallpaper"
 fi
