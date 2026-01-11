@@ -39,6 +39,7 @@
       obs-studio
       github-cli
       geeqie
+      osu-lazer-bin
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
