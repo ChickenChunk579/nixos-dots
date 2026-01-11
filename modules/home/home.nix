@@ -18,6 +18,7 @@
     ./hyprlock.nix
     ./hypridle.nix
     ./nixwal.nix
+    ./spicetify.nix
   ];
   home = {
     packages = with pkgs; [
