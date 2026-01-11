@@ -1,6 +1,5 @@
 #!/run/current-system/sw/bin/bash
-ROOT_RESULT=$(echo -e "Terminal\nLauncher\nWorkspace Left\nWorkspace Right\nScreenshot (Copy)\nChange Wallpaper\nKill Active\nLock\nPower" | walker --dmenu)
-
+ROOT_RESULT=$(echo -e "Terminal\nLauncher\nWorkspace Left\nWorkspace Right\nScreenshot (Copy)\nChange Wallpaper\nChange Shaders\nKill Active\nLock\nPower" | walker --dmenu)
 if [[ "$ROOT_RESULT" == "Terminal" ]]; then
   hyprctl dispatch exec "kitty"
 fi
@@ -15,6 +14,9 @@ if [[ "$ROOT_RESULT" == "Workspace Right" ]]; then
 fi
 if [[ "$ROOT_RESULT" == "Change Wallpaper" ]]; then
   ~/.config/hypr/scripts/wallpaper.sh
+fi
+if [[ "$ROOT_RESULT" == "Change Shaders" ]]; then
+  ~/nix/shade.sh
 fi
 if [[ "$ROOT_RESULT" == "Screenshot (Copy)" ]]; then
   grim -g "$(slurp)" - | wl-copy && notify-send 'Screenshot copied'
