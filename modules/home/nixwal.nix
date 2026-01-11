@@ -1,6 +1,6 @@
-{ ... }:
+{ pkgs, ... }:
 {
-  home.file.".nix-profile/bin" = {
+  home.file.".local/bin/nixwal" = {
     text = ''
       #!/usr/bin/env bash
       set -e
@@ -38,7 +38,7 @@
     executable = true;
   };
 
-  home.file.".nix-profile/bind" = {
+  home.file.".local/bin/nixwald" = {
     text = ''
       #!/usr/bin/env bash
       set -e
@@ -87,7 +87,7 @@
 
     Service = {
       Type = "oneshot";
-      ExecStart = "%h/.nix-profile/bind";
+      ExecStart = "%h/.local/bin/nixwald";
     };
   };
 }

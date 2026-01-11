@@ -78,7 +78,7 @@
     label = [
       {
         monitor = "";
-        text = "cmd[update:1000] echo \"<span>$(date +\"%H:%M\")</span>\"\"";
+        text = "cmd[update:1000] date '+%H:%M:%S'";
         color = "$foreground";
         font_size = 130;
         font_family = "RobotoMono Nerd Font";
@@ -87,12 +87,14 @@
         valign = "center";
       }
 
+
+
       ################################
       # Day / Date
       ################################
       {
         monitor = "";
-        text = "cmd[update:1000] echo \"$(date +\"%A, %d %B\")\"\"";
+        text = "cmd[update:1000] date '+%A, %d %B'";
         color = "$foreground";
         font_size = 30;
         font_family = "RobotoMono Nerd Font";
@@ -100,6 +102,7 @@
         halign = "center";
         valign = "center";
       }
+
 
       ################################
       # User Greeting
