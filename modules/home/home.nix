@@ -75,4 +75,16 @@
   programs.vscode.enable = true;
 
   services.syncthing.enable = true;
+
+  systemd.user.services.restart-seatd = {
+    Unit = {
+      Description = "Restart seatd after logout";
+      After = ["graphical-session.target"];
+      WantedBy = ["graphical-session.target"];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl restart seatd";
+    };
+  };
 }
