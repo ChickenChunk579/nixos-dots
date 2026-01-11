@@ -5,9 +5,13 @@
     "float,class:walker"
   ];
   wayland.windowManager.hyprland.settings.windowrulev2 = [
-    "float,title:(swayosd-server)"
     "float, initialTitle:^(Steam Input On-screen Keyboard)$"
     "stayfocused, initialTitle:^(Steam Input On-screen Keyboard)$"
     "pin, initialTitle:^(Steam Input On-screen Keyboard)$"
+    "abovelock true, initialTitle:^(Steam Input On-screen Keyboard)$" # Critical for visibility over hyprlock
+    "noanim, initialTitle:^(Steam Input On-screen Keyboard)$"
+    "dimaround, initialTitle:^(Steam Input On-screen Keyboard)$"    # Helps isolate the window
   ];
+
+
 }

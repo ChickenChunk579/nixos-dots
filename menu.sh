@@ -1,5 +1,5 @@
 #!/run/current-system/sw/bin/bash
-ROOT_RESULT=$(echo -e "Terminal\nLauncher\nWorkspace Left\nWorkspace Right\nScreenshot (Copy)\nChange Wallpaper\nKill Active\nPower" | walker --dmenu)
+ROOT_RESULT=$(echo -e "Terminal\nLauncher\nWorkspace Left\nWorkspace Right\nScreenshot (Copy)\nChange Wallpaper\nKill Active\nLock\nPower" | walker --dmenu)
 
 if [[ "$ROOT_RESULT" == "Terminal" ]]; then
   hyprctl dispatch exec "kitty"
@@ -18,6 +18,10 @@ if [[ "$ROOT_RESULT" == "Change Wallpaper" ]]; then
 fi
 if [[ "$ROOT_RESULT" == "Screenshot (Copy)" ]]; then
   grim -g "$(slurp)" - | wl-copy && notify-send 'Screenshot copied'
+fi
+if [[ "$ROOT_RESULT" == "Lock" ]]; then
+  hyprlock & disown
+  
 fi
 if [[ "$ROOT_RESULT" == "Kill Active" ]]; then
   hyprctl dispatch killactive
