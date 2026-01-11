@@ -91,4 +91,6 @@
   programs.firefox.enable = true;
   programs.neovim.enable = true;
   programs.vscode.enable = true;
+
+  services.syncthing.enable = true;
 }
