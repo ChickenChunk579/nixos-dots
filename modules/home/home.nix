@@ -41,6 +41,7 @@
       github-cli
       geeqie
       osu-lazer-bin
+      obsidian
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
