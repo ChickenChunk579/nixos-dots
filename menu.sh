@@ -1,5 +1,5 @@
 #!/run/current-system/sw/bin/bash
-ROOT_RESULT=$(echo -e "Terminal\nLauncher\nWorkspace Left\nWorkspace Right\nScreenshot (Copy)\nChange Wallpaper\nChange Shaders\nKill Active\nLock\nPower" | walker --dmenu)
+ROOT_RESULT=$(echo -e "Terminal\nLauncher\nWorkspace Left\nWorkspace Right\nScreenshot (Copy)\nChange Wallpaper\nChange Shaders\nKill Active\nLock\nFloat\nPower" | walker --dmenu)
 if [[ "$ROOT_RESULT" == "Terminal" ]]; then
   hyprctl dispatch exec "kitty"
 fi
@@ -23,7 +23,9 @@ if [[ "$ROOT_RESULT" == "Screenshot (Copy)" ]]; then
 fi
 if [[ "$ROOT_RESULT" == "Lock" ]]; then
   hyprlock & disown
-  
+fi
+if [[ "$ROOT_RESULT" == "Float" ]]; then
+  hyprctl dispatch togglefloating
 fi
 if [[ "$ROOT_RESULT" == "Kill Active" ]]; then
   hyprctl dispatch killactive
