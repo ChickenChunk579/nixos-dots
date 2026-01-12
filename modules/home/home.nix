@@ -10,7 +10,7 @@
     walker.homeManagerModules.default
     ./hyprland/main.nix
     ./walker.nix
-    ./waybar/main.nix
+    ./quickshell/main.nix
     ./hyprshade/main.nix
     ./wlogout.nix
     ./swaync.nix
@@ -42,6 +42,7 @@
       geeqie
       osu-lazer-bin
       obsidian
+      lm_sensors
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";

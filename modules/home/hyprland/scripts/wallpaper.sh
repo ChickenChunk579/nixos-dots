@@ -4,30 +4,40 @@
 current_dir="$HOME/Wallpapers"
 
 while true; do
-    # List files and directories in current_dir
-    # Only show files with image extensions
-    choices=()
+    dirs=()
+    files=()
+
+    # Collect directories and image files separately
     for item in "$current_dir"/*; do
         if [[ -d "$item" ]]; then
-            choices+=("$(basename "$item")/")
+            dirs+=("$(basename "$item")/")
         elif [[ "$item" =~ \.(jpg|jpeg|png|bmp|gif|webp)$ ]]; then
-            choices+=("$(basename "$item")")
+            files+=("$(basename "$item")")
         fi
     done
 
-    # Use walker (or dmenu) to pick an item
+    # Build menu: Random first, then directories, then files
+    choices=("🎲 Random" "${dirs[@]}" "${files[@]}")
+
+    # Pick an item
     selection=$(printf '%s\n' "${choices[@]}" | walker --dmenu)
 
     # Exit if nothing selected
     [[ -z "$selection" ]] && exit 0
 
-    # Check if selection is a directory
+    # Random wallpaper from current directory
+    if [[ "$selection" == "Random" ]]; then
+        (( ${#files[@]} == 0 )) && continue
+        random_file="${files[RANDOM % ${#files[@]}]}"
+        ~/.local/bin/nixwal "$current_dir/$random_file"
+        exit 0
+    fi
+
+    # Directory navigation
     if [[ "$selection" == */ ]]; then
-        # Navigate into the selected directory
         current_dir="$current_dir/${selection%/}"
         continue
     else
-        # Set the wallpaper and exit
         ~/.local/bin/nixwal "$current_dir/$selection"
         exit 0
     fi
