@@ -86,7 +86,7 @@ Component {
                       spacing: 16 
 
                       Text {
-                          text: `  ${cpuUsage}%`
+                          text: `  ${cpuUsage}%`
                           font.family: font 
                           font.pixelSize: fontSize 
                           color: fontColor
@@ -95,7 +95,7 @@ Component {
 
                       Text {
                           id: memText
-                          text: `  ${memUsageStr} GiB`
+                          text: `  ${memUsageStr} GiB`
                           font.family: font
                           font.pixelSize: fontSize
                           color: fontColor
@@ -104,7 +104,7 @@ Component {
 
                       Text {
                           id: cpuTempText
-                          text: `󰔏 ${cpuTemp}°C`
+                          text: `󰔏  ${cpuTemp}°C`
                           font.family: font
                           font.pixelSize: fontSize
                           color: fontColor
@@ -130,7 +130,7 @@ Component {
                       Text {
                           font.family: font;
                           font.pixelSize: fontSize;
-                          text: `  ${pipewireVolume}`;
+                          text: `  ${pipewireVolume}`;
                           color: fontColor
                       }
                       Text {
@@ -155,13 +155,13 @@ Component {
                       Text {
                           font.family: font;
                           font.pixelSize: fontSize;
-                          text: `  ${currentTime}`;
+                          text: `  ${currentTime}`;
                           color: fontColor
                       }
                       Text {
                           font.family: font;
                           font.pixelSize: fontSize;
-                          text: `  ${currentDate}`;
+                          text: `${currentDate}`;
                           color: fontColor
                       }
                   }

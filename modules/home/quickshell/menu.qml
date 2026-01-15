@@ -68,7 +68,7 @@ PopupWindow {
 
                       MouseArea {
                           anchors.fill: parent
-                          onClicked: openMenu = openMenu == 0 ? 1 : 0
+                          onClicked: openMenu = openMenu == 0 ? 2 : 0
                           cursorShape: Qt.PointingHandCursor
                       }
 

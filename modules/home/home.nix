@@ -583,4 +583,8 @@
       text-align: right !important;
     }
   '';
+  wayland.windowManager.hyprland.plugins = [
+    pkgs.hyprlandPlugins.hyprgrass
+  ];
+
 }
