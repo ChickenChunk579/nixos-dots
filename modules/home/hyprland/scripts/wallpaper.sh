@@ -17,7 +17,7 @@ while true; do
     done
 
     # Build menu: Random first, then directories, then files
-    choices=("🎲 Random" "${dirs[@]}" "${files[@]}")
+    choices=("Random" "${dirs[@]}" "${files[@]}")
 
     # Pick an item
     selection=$(printf '%s\n' "${choices[@]}" | walker --dmenu)
@@ -38,7 +38,7 @@ while true; do
         current_dir="$current_dir/${selection%/}"
         continue
     else
-        ~/.local/bin/nixwal "$current_dir/$selection"
+        matugen image "$current_dir/$selection" -m dark
         exit 0
     fi
 done

@@ -40,6 +40,7 @@
       osu-lazer-bin
       obsidian
       lm_sensors
+      bottles
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
@@ -68,7 +69,7 @@
       confirm_os_window_close = 0;
     };
     extraConfig = ''
-      include ~/.cache/wal/colors-kitty.conf
+      include ~/.config/kitty/matugen.conf
     '';
   };
   programs.firefox.enable = true;

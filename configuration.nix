@@ -65,7 +65,6 @@ in
       "wheel"
       "plugdev"
       "networkmanager"
-      "libvirtd"
     ];
   };
   home-manager = {
@@ -88,10 +87,9 @@ in
     wireguard-tools
     protonvpn-gui
     qemu
-    qemu_kvm
+    virt-manager
   ];
   virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
   services.udev.packages = [ pkgs.swayosd ];
 
   systemd.services.swayosd-libinput-backend = {

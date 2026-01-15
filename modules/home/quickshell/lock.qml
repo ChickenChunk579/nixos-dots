@@ -46,7 +46,7 @@
                       spacing: 15
 
                       Text { 
-                          text: pam.messageIsError ? pam.message : `''${currentTime}`
+                          text: pam.messageIsError ? pam.message : `${currentTime}`
                           color: pam.messageIsError ? "red" : "white"
                           font.family: font
                           font.pixelSize: fontSize + 35
@@ -54,7 +54,7 @@
                       }
 
                       Text { 
-                          text: `''${currentDate}`
+                          text: `${currentDate}`
                           color: fontColor
                           font.family: font
                           font.pixelSize: fontSize + 15

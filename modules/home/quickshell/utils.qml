@@ -18,7 +18,7 @@ function refreshMediaState() {
 
 function fetchTheme() {
     var xhr = new XMLHttpRequest()
-    xhr.open("GET", "file:///home/rhys/.cache/wal/colors.json")
+    xhr.open("GET", "file:///home/rhys/.config/quickshell/colors.json")
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (!xhr.responseText) return

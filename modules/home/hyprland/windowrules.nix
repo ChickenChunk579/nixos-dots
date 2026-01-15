@@ -11,6 +11,8 @@
     "abovelock true, initialTitle:^(Steam Input On-screen Keyboard)$" # Critical for visibility over hyprlock
     "noanim, initialTitle:^(Steam Input On-screen Keyboard)$"
     "dimaround, initialTitle:^(Steam Input On-screen Keyboard)$"
+    "float,class:^(org\.quickshell)$"
+    "float,title:^(quickshell)$"
   ];
 
 

@@ -14,12 +14,11 @@
     import Quickshell.Services.Notifications
     import Quickshell.Widgets
 
-
     import QtQuick
     import QtQuick.Layouts
     import QtQuick.Controls
     import QtQuick.Effects
-
+    import QtQuick.LocalStorage
 
     PanelWindow {
         id: barPanel
@@ -37,39 +36,39 @@
         property color accentColor: "#ffffff"
         property string fontColor: "white"
 
+        // System info
         property int cpuUsage: 0
         property real lastCpuTotal: 0
         property real lastCpuIdle: 0
-        property string cpuTemp: "0";
-
+        property string currentWindowTitle: ""
+        property string cpuTemp: "0"
         property string memUsageStr: "0"
         property real memPercent: 0
 
-        property string pipewireVolume: ""
-        property string currentWindowTitle: ""
-
-        property int openMenu: 0
-
+        // Network
         property bool wifiOn: false
-
-        // Time in HH:MM:SS
-        property string currentTime: Qt.formatTime(new Date(), "HH:mm:ss")
-
-        // Date in DD/MM/YYYY
-        property string currentDate: Qt.formatDate(new Date(), "dd/MM/yyyy")
-
         property int wifiPercent: 0
         property string wifiIcon: "󰤯"
 
-        property string walPath: "/home/rhys/.cache/wal/colors.json"
+        // Time and date
+        property string currentTime: Qt.formatTime(new Date(), "HH:mm:ss")
+        property string currentDate: Qt.formatDate(new Date(), "dd/MM/yyyy")
 
-        // Media properties
+        // Theme
+        property string walPath: "/home/rhys/.cache/wal/colors.json"
+        property int themeEpoch: 0
+
+        // Media
         property string mediaTitle: ""
         property string mediaStatus: "Stopped"
         property real mediaPosition: 0
         property real mediaLength: 0
         property bool isPlaying: false
         property string mediaArtUrl: ""
+        property string pipewireVolume: ""
+
+        // Menu
+        property int openMenu: 0
 
         // ============ UTILITY FUNCTIONS ============
         ${builtins.readFile ./utils.qml}
@@ -126,8 +125,6 @@
         implicitHeight: panelHeight
         color: "transparent"
 
-        property int themeEpoch: 0
-
         ${builtins.readFile ./panel.qml}
 
         Loader {
@@ -142,13 +139,10 @@
         }
 
         ${builtins.readFile ./menu.qml}
-
         ${builtins.readFile ./power.qml}
-    
         ${builtins.readFile ./lock.qml}
-
         ${builtins.readFile ./osd.qml}
-        
+
         IpcHandler {
             target: "shell"
 
@@ -157,7 +151,7 @@
             function powerMenu() { barPanel.openMenu = 2 }
         }
     }
-  '';
+'';
 
   home.file.".config/quickshell/pam/password.conf".text = "auth required pam_unix.so";
 

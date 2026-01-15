@@ -48,6 +48,7 @@
     '';
     executable = true;
   };
+  /*
 
   home.file.".local/bin/nixwald" = {
     text = ''
@@ -101,4 +102,5 @@
       ExecStart = "%h/.local/bin/nixwald";
     };
   };
+  */
 }

@@ -23,7 +23,7 @@
   wayland.windowManager.hyprland = {
     settings = {
       source = [
-        "~/.cache/wal/colors-hyprland"
+        "~/.config/hypr/matugen.conf"
       ];
       general = {
         layout = "dwindle";
@@ -32,14 +32,14 @@
         gaps_out = 12;
         border_size = 2;
 
-        "col.inactive_border" = "$color0";
-        "col.active_border" = "$color1";
+        "col.inactive_border" = "$on_primary";
+        "col.active_border" = "$primary";
 
         resize_on_border = true;
       };
 
       decoration = {
-        rounding = 10;
+        rounding = 18;
         rounding_power = 2;
 
         # Change transparency of focused and unfocused windows
