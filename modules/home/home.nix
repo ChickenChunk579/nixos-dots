@@ -12,14 +12,11 @@
     ./walker.nix
     ./quickshell/main.nix
     ./hyprshade/main.nix
-    ./wlogout.nix
-    ./swaync.nix
-    ./swayosd.nix
-    ./hyprlock.nix
     ./hypridle.nix
     ./nixwal.nix
     ./spicetify.nix
     ./fastfetch.nix
+    ./matugen.nix
   ];
   home = {
     packages = with pkgs; [

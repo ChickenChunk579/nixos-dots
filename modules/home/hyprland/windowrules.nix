@@ -10,7 +10,7 @@
     "pin, initialTitle:^(Steam Input On-screen Keyboard)$"
     "abovelock true, initialTitle:^(Steam Input On-screen Keyboard)$" # Critical for visibility over hyprlock
     "noanim, initialTitle:^(Steam Input On-screen Keyboard)$"
-    "dimaround, initialTitle:^(Steam Input On-screen Keyboard)$"    # Helps isolate the window
+    "dimaround, initialTitle:^(Steam Input On-screen Keyboard)$"
   ];
 
 

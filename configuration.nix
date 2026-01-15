@@ -18,8 +18,8 @@ let
       cat <<EOF > $out/share/wayland-sessions/hyprland-custom.desktop
       [Desktop Entry]
       Name=Hyprland (Custom)
-      Comment=Launch Hyprland with dbus-run-session
-      Exec=dbus-run-session ${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/Hyprland
+      Comment=Launch Hyprland properly
+      Exec=${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/Hyprland
       Type=Application
       EOF
     '';
@@ -53,6 +53,7 @@ in
 
   };
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = with pkgs; [ networkmanager-openvpn ];
 
   time.timeZone = "Europe/London";
 
@@ -63,6 +64,8 @@ in
     extraGroups = [
       "wheel"
       "plugdev"
+      "networkmanager"
+      "libvirtd"
     ];
   };
   home-manager = {
@@ -82,7 +85,13 @@ in
     nano
     cage
     swayosd
+    wireguard-tools
+    protonvpn-gui
+    qemu
+    qemu_kvm
   ];
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
   services.udev.packages = [ pkgs.swayosd ];
 
   systemd.services.swayosd-libinput-backend = {
@@ -105,6 +114,8 @@ in
 
 
   networking.firewall.enable = false;
+  services.gnome.gnome-keyring.enable = true;
+  programs.seahorse.enable = true;
 
   system.stateVersion = "25.11";
 
@@ -116,6 +127,9 @@ in
   nixpkgs.config.allowUnfree = true;
 
   hardware.graphics.enable = true;
+  hardware.bluetooth.enable = true;
+
+  services.blueman.enable = true;
 
   programs.hyprland = {
     enable = true;    
@@ -135,6 +149,8 @@ in
 
   fonts.packages = with pkgs; [
     nerd-fonts.roboto-mono
+    material-design-icons
+    roboto
   ];
 
   services.pipewire = {
