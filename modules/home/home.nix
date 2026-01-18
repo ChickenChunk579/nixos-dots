@@ -41,6 +41,8 @@
       obsidian
       lm_sensors
       bottles
+      zafiro-icons
+      mpv
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";
@@ -52,6 +54,9 @@
       NIXOS_OZONE_WL = "1";
     };
   };
+  gtk.enable = true;
+  gtk.iconTheme.package = pkgs.zafiro-icons;
+  gtk.iconTheme.name = "Zafiro-icons-Dark";
 
   home.file.".bashrc".text = ''
     eval -- "$(/etc/profiles/per-user/rhys/bin/starship init bash --print-full-init)"

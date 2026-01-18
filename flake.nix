@@ -24,6 +24,7 @@
     };
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    nixos-grub-themes.url = "github:jeslie0/nixos-grub-themes";
   };
 
   outputs = {
@@ -35,6 +36,7 @@
     walker,
     jovian,
     spicetify-nix,
+    nixos-grub-themes
   }:
   let
     system = "x86_64-linux";
@@ -45,7 +47,7 @@
         inherit system;
 
         specialArgs = {
-          inherit hyprland walker;
+          inherit hyprland walker nixos-grub-themes;
         };
 
         modules = [

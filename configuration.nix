@@ -4,31 +4,43 @@
   pkgs,
   hyprland,
   walker,
+  nixos-grub-themes,
   ...
 }:
 
 let
   # This defines the custom entry with the required metadata
-  custom-hyprland-session = pkgs.runCommand "custom-hyprland-session" 
-    {
-      passthru.providedSessions = [ "hyprland-custom" ];
-    }
-    ''
-      mkdir -p $out/share/wayland-sessions
-      cat <<EOF > $out/share/wayland-sessions/hyprland-custom.desktop
-      [Desktop Entry]
-      Name=Hyprland (Custom)
-      Comment=Launch Hyprland properly
-      Exec=${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/Hyprland
-      Type=Application
-      EOF
-    '';
+  custom-hyprland-session =
+    pkgs.runCommand "custom-hyprland-session"
+      {
+        passthru.providedSessions = [ "hyprland-custom" ];
+      }
+      ''
+        mkdir -p $out/share/wayland-sessions
+        cat <<EOF > $out/share/wayland-sessions/hyprland-custom.desktop
+        [Desktop Entry]
+        Name=Hyprland (Custom)
+        Comment=Launch Hyprland properly
+        Exec=${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/Hyprland
+        Type=Application
+        EOF
+      '';
 in
 {
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.canTouchEfiVariables = false;
+  boot.loader.grub.efiInstallAsRemovable = true;
+  boot.loader.grub.theme = nixos-grub-themes.packages.${pkgs.system}.nixos;
+  boot.loader.grub.extraEntries = ''
+    menuentry "macOS (OpenCore)" {
+      insmod part_gpt
+      insmod fat
+      search --no-floppy --set=root --file /EFI/OC/OpenCore.efi
+      chainloader /EFI/OC/OpenCore.efi
+    }
+  '';
   boot = {
 
     plymouth = {
@@ -88,6 +100,7 @@ in
     protonvpn-gui
     qemu
     virt-manager
+    distrobox
   ];
   virtualisation.libvirtd.enable = true;
   services.udev.packages = [ pkgs.swayosd ];
@@ -110,10 +123,11 @@ in
   services.dbus.enable = true;
   #services.dbus.socketActivated = true;
 
-
   networking.firewall.enable = false;
   services.gnome.gnome-keyring.enable = true;
   programs.seahorse.enable = true;
+
+  programs.nix-ld.enable = true;
 
   system.stateVersion = "25.11";
 
@@ -130,7 +144,7 @@ in
   services.blueman.enable = true;
 
   programs.hyprland = {
-    enable = true;    
+    enable = true;
 
     # set the flake package
     package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
@@ -160,4 +174,10 @@ in
 
   programs.steam.enable = true;
   programs.steam.extest.enable = true;
+
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
+
 }
