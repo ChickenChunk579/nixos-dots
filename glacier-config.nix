@@ -49,17 +49,17 @@
   modules = {
     # System-level modules
     virtualization = true;    # QEMU, virt-manager, distrobox
-    networking = false;        # VPN, networking tools
-    gaming = true;             # Steam
+    networking = true;        # VPN, networking tools
+    gaming = false;             # Steam
     podman = false;            # Container runtime
     flatpak = false;           # Flatpak runtime
 
     # Home-manager modules
     devTools = true;          # Development tools (neovim, vscode, etc)
-    media = true;             # Media tools (GIMP, OBS, mpv, etc)
-    audio = true;             # Audio tools (Spicetify, etc)
+    media = false;             # Media tools (GIMP, OBS, mpv, etc)
+    audio = false;             # Audio tools (Spicetify, etc)
     productivity = false;      # Productivity apps (Obsidian, etc)
-    gaming_home = false;       # Gaming apps (Godot, osu!, etc)
+    gaming_home = true;       # Gaming apps (Godot, osu!, etc)
     utilities = true;         # Utilities (syncthing, etc)
   };
 }

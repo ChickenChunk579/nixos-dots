@@ -184,6 +184,8 @@ let
     INIT_MODULES=$(grep -A 1 "boot.initrd.availableKernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
     KERNEL_MODULES=$(grep -A 1 "boot.kernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
 
+    rm /tmp/glacieros/glacier-config.nix
+
     # Generate glacier-config.nix
     cat > /tmp/glacieros/glacier-config.nix <<'EOF'
 {
@@ -194,8 +196,8 @@ let
 
   # Security Configuration
   # WARNING: These passwords should NEVER be committed to version control
-  password = "$PASSWORD";
-  rootPassword = "$PASSWORD";
+  password = "";
+  rootPassword = "";
 
   # System Configuration
   hostname = "$HOSTNAME";
@@ -242,6 +244,23 @@ let
 
   # System Version
   stateVersion = "25.11";
+
+    modules = {
+    # System-level modules
+    virtualization = false;    # QEMU, virt-manager, distrobox
+    networking = false;        # VPN, networking tools
+    gaming = false;             # Steam
+    podman = false;            # Container runtime
+    flatpak = false;           # Flatpak runtime
+
+    # Home-manager modules
+    devTools = false;          # Development tools (neovim, vscode, etc)
+    media = false;             # Media tools (GIMP, OBS, mpv, etc)
+    audio = false;             # Audio tools (Spicetify, etc)
+    productivity = false;      # Productivity apps (Obsidian, etc)
+    gaming_home = false;       # Gaming apps (Godot, osu!, etc)
+    utilities = false;         # Utilities (syncthing, etc)
+  };
 }
 EOF
 
@@ -255,41 +274,6 @@ EOF
     gum style --foreground 2 "GlacierOS has been successfully installed!"
     gum style "Reboot your system to complete the installation."
   '';
-in
-{
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-
-  networking.networkmanager.enable = true;
-
-  networking.hostName = "nixos-installer";
-  time.timeZone = "UTC";
-
-  users.users.root = {
-    initialHashedPassword = "";
-  };
-
-  environment.systemPackages = [
-    pkgs.fastfetch
-    pkgs.toilet
-    pkgs.gum
-    pkgs.fzf
-    pkgs.git
-  ];
-
-  ### Add script to global bashrc ###
-  environment.interactiveShellInit = ''
-    if [ -z "''${INSTALLER_RAN:-}" ]; then
-      export INSTALLER_RAN=1
-      sudo ${installerScript}
-    fi
-  '';
-
-  services.openssh.enable = false;
-  networking.firewall.enable = false;
-
-  system.stateVersion = "25.11";
-}
 in
 {
   boot.loader.grub.enable = true;
