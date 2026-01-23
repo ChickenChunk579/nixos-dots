@@ -180,10 +180,9 @@ let
     BOOT_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | grep "/boot" | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
     SWAP_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | tail -1 | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
 
-    # Get kernel modules from hardware config
+    # Get kernel modules from hardware config - extract the full array syntax
     INIT_MODULES=$(grep -A 1 "boot.initrd.availableKernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
-    KERNEL_MODULES=$(grep -A 1 "boot.kernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
-
+    
     rm /tmp/glacieros/glacier-config.nix
 
     # Generate glacier-config.nix
@@ -245,30 +244,35 @@ let
   # System Version
   stateVersion = "25.11";
 
-    modules = {
+  # System Modules - enable/disable optional features
+  # Base modules (always enabled): quickshell, hyprland, walker, firefox, kitty
+  modules = {
     # System-level modules
-    virtualization = false;    # QEMU, virt-manager, distrobox
+    virtualization = true;    # QEMU, virt-manager, distrobox
     networking = false;        # VPN, networking tools
-    gaming = false;             # Steam
+    gaming = true;             # Steam
     podman = false;            # Container runtime
     flatpak = false;           # Flatpak runtime
 
     # Home-manager modules
-    devTools = false;          # Development tools (neovim, vscode, etc)
-    media = false;             # Media tools (GIMP, OBS, mpv, etc)
-    audio = false;             # Audio tools (Spicetify, etc)
+    devTools = true;          # Development tools (neovim, vscode, etc)
+    media = true;             # Media tools (GIMP, OBS, mpv, etc)
+    audio = true;             # Audio tools (Spicetify, etc)
     productivity = false;      # Productivity apps (Obsidian, etc)
     gaming_home = false;       # Gaming apps (Godot, osu!, etc)
-    utilities = false;         # Utilities (syncthing, etc)
+    utilities = true;         # Utilities (syncthing, etc)
   };
 }
 EOF
 
     echo "Installing system..."
-    nixos-install --root /mnt --flake /tmp/glacieros#alpha --no-root-passwd
+    nixos-install --root /mnt --flake /tmp/glacieros#glacier --no-root-passwd
 
     echo "Configuring root password..."
     nixos-enter --root /mnt -- bash -c "echo 'root:$PASSWORD' | chpasswd"
+
+    echo "Copying generated configs..."
+    cp -r /tmp/glacieros /mnt/glacieros
 
     echo "Installation complete!"
     gum style --foreground 2 "GlacierOS has been successfully installed!"
