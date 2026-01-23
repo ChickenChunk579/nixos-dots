@@ -1,4 +1,4 @@
-SYSTEM = $(shell cat system.txt)
+SYSTEM = glacier
 
 test:
 	nix build .#nixosConfigurations.$(SYSTEM).config.system.build.toplevel --no-link

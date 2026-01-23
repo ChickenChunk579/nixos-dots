@@ -11,10 +11,15 @@ let
     echo "Welcome to the GlacierOS Installer!"
 
     echo "(1/?) User setup"
-    gum input --prompt "Username: " --placeholder "your username" > /tmp/installer-username
-    gum input --prompt "Full name: " --placeholder "Your Full Name" > /tmp/installer-fullname
-    gum input --prompt "Password: " --placeholder "your password" --password > /tmp/installer-password
-    gum input --prompt "Confirm password: " --placeholder "your password" --password > /tmp/installer-password
+    USERNAME=$(gum input --prompt "Username: " --placeholder "your username")
+    FULLNAME=$(gum input --prompt "Full name: " --placeholder "Your Full Name")
+    PASSWORD=$(gum input --prompt "Password: " --placeholder "your password" --password)
+    PASSWORD_CONFIRM=$(gum input --prompt "Confirm password: " --placeholder "your password" --password)
+    
+    if [ "$PASSWORD" != "$PASSWORD_CONFIRM" ]; then
+      gum style --foreground 1 "Passwords do not match!"
+      exit 1
+    fi
 
     echo "(2/?) Disk"
     DISKS=$(lsblk -dno NAME,TYPE | grep disk | awk '{print $1}')
@@ -74,8 +79,6 @@ let
     --prompt "Hostname: " \
     --value "$(hostname)")
 
-    echo "$HOSTNAME" > /tmp/installer-hostname
-
     echo "(4/?) Timezone"
 
     # List regions (Africa, America, Europe, etc.)
@@ -91,11 +94,26 @@ let
 
     echo "Selected timezone: $TIMEZONE"
 
-    # Persist for installer use
-    echo "$TIMEZONE" > /tmp/installer-timezone
+    echo "(5/?) Hardware Detection"
+    
+    # Detect CPU
+    CPU_TYPE=$(grep -o "intel\|amd" /proc/cpuinfo | head -1 || echo "intel")
+    echo "Detected CPU: $CPU_TYPE"
+    CPU_KERNEL_MOD="kvm-$CPU_TYPE"
+    
+    # Detect GPU
+    GPU_TYPE=""
+    if lspci | grep -qi nvidia; then
+      GPU_TYPE="nvidia"
+    elif lspci | grep -qi amd; then
+      GPU_TYPE="amd"
+    elif lspci | grep -qi "intel.*graphics"; then
+      GPU_TYPE="intel"
+    fi
+    echo "Detected GPU: ''${GPU_TYPE:-integrated}"
 
-    echo "(5/?) Starting installation"
-    echo "(1/?) Partitioning disk"
+    echo "(6/?) Starting installation"
+    echo "(1/3) Partitioning disk"
 
     TARGET_DISK="/dev/$DISK"
 
@@ -143,34 +161,135 @@ let
     exit 1
     fi
 
-    echo "(2/?) Mounting filesystems"
+    echo "(2/3) Mounting filesystems"
     mount ''${TARGET_DISK}3 /mnt
     mkdir -p /mnt/boot
     mount ''${TARGET_DISK}1 /mnt/boot
     swapon ''${TARGET_DISK}2
 
-    echo "(3/?) Cloning configuration"
+    echo "(3/3) Cloning configuration and generating glacier-config.nix"
 
     git clone https://github.com/ChickenChunk579/nixos-dots /tmp/glacieros --depth 1 --branch new
 
-    echo "(4/?) Generating configuration"
+    echo "Generating hardware configuration..."
     mkdir -p /mnt/etc/nixos
     nixos-generate-config --root /mnt
-    rm /tmp/glacieros/systems/alpha.nix
-    cp /mnt/etc/nixos/hardware-configuration.nix /tmp/glacieros/systems/alpha.nix
 
-    echo "(5/?) Installing system"
+    # Extract device UUIDs
+    ROOT_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | grep "/" | head -1 | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
+    BOOT_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | grep "/boot" | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
+    SWAP_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | tail -1 | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
 
+    # Get kernel modules from hardware config
+    INIT_MODULES=$(grep -A 1 "boot.initrd.availableKernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
+    KERNEL_MODULES=$(grep -A 1 "boot.kernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
+
+    # Generate glacier-config.nix
+    cat > /tmp/glacieros/glacier-config.nix <<'EOF'
+{
+  # User Configuration
+  username = "$USERNAME";
+  fullName = "$FULLNAME";
+  timezone = "$TIMEZONE";
+
+  # Security Configuration
+  # WARNING: These passwords should NEVER be committed to version control
+  password = "$PASSWORD";
+  rootPassword = "$PASSWORD";
+
+  # System Configuration
+  hostname = "$HOSTNAME";
+
+  # Hardware Configuration
+  hardware = {
+    cpu = "$CPU_TYPE";
+    gpu = "$GPU_TYPE";
+    
+    # Kernel modules for boot
+    kernelModules = [ "$CPU_KERNEL_MOD" ];
+    
+    # Available kernel modules for initrd
+    initrd = {
+      availableKernelModules = [ $INIT_MODULES ];
+      kernelModules = [ ];
+    };
+    
+    # Extra module packages (usually empty)
+    extraModulePackages = [ ];
+  };
+
+  # Filesystems Configuration
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/$ROOT_UUID";
+      fsType = "btrfs";
+    };
+    
+    "/boot" = {
+      device = "/dev/disk/by-uuid/$BOOT_UUID";
+      fsType = "vfat";
+      options = [ "fmask=0022" "dmask=0022" ];
+    };
+  };
+
+  # Swap Configuration
+  swapDevices = [
+    { device = "/dev/disk/by-uuid/$SWAP_UUID"; }
+  ];
+
+  # Platform Configuration
+  hostPlatform = "x86_64-linux";
+
+  # System Version
+  stateVersion = "25.11";
+}
+EOF
+
+    echo "Installing system..."
     nixos-install --root /mnt --flake /tmp/glacieros#alpha --no-root-passwd
 
-    echo "(6/?) Post-install configuration"
-    ROOT_PASS=$(< /tmp/installer-password)
+    echo "Configuring root password..."
+    nixos-enter --root /mnt -- bash -c "echo 'root:$PASSWORD' | chpasswd"
 
-    nixos-enter --root /mnt -- bash -c "echo 'root:$ROOT_PASS' | chpasswd"
-
-
-    echo "Done."
+    echo "Installation complete!"
+    gum style --foreground 2 "GlacierOS has been successfully installed!"
+    gum style "Reboot your system to complete the installation."
   '';
+in
+{
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";
+
+  networking.networkmanager.enable = true;
+
+  networking.hostName = "nixos-installer";
+  time.timeZone = "UTC";
+
+  users.users.root = {
+    initialHashedPassword = "";
+  };
+
+  environment.systemPackages = [
+    pkgs.fastfetch
+    pkgs.toilet
+    pkgs.gum
+    pkgs.fzf
+    pkgs.git
+  ];
+
+  ### Add script to global bashrc ###
+  environment.interactiveShellInit = ''
+    if [ -z "''${INSTALLER_RAN:-}" ]; then
+      export INSTALLER_RAN=1
+      sudo ${installerScript}
+    fi
+  '';
+
+  services.openssh.enable = false;
+  networking.firewall.enable = false;
+
+  system.stateVersion = "25.11";
+}
 in
 {
   boot.loader.grub.enable = true;

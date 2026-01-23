@@ -9,6 +9,8 @@
 }:
 
 let
+  glacier = import ./glacier-config.nix;
+  
   # This defines the custom entry with the required metadata
   custom-hyprland-session =
     pkgs.runCommand "custom-hyprland-session"
@@ -42,6 +44,10 @@ in
     }
   '';
   boot = {
+    initrd.availableKernelModules = glacier.hardware.initrd.availableKernelModules;
+    initrd.kernelModules = glacier.hardware.initrd.kernelModules;
+    kernelModules = glacier.hardware.kernelModules;
+    extraModulePackages = glacier.hardware.extraModulePackages;
 
     plymouth = {
       enable = true;
@@ -62,16 +68,21 @@ in
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
     ];
-
   };
+
+  # Filesystem configuration from glacier-config.nix
+  fileSystems = glacier.fileSystems;
+  swapDevices = glacier.swapDevices;
+
   networking.networkmanager.enable = true;
   networking.networkmanager.plugins = with pkgs; [ networkmanager-openvpn ];
+  networking.hostName = glacier.hostname;
 
-  time.timeZone = "Europe/London";
+  time.timeZone = glacier.timezone;
 
   users.groups.plugdev = { };
 
-  users.users.rhys = {
+  users.users."${glacier.username}" = {
     isNormalUser = true;
     extraGroups = [
       "wheel"
@@ -79,6 +90,7 @@ in
       "networkmanager"
     ];
   };
+
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -89,20 +101,23 @@ in
       inherit walker hyprland;
       isDeck = false;
     };
-    users.rhys = import ./modules/home/home.nix;
+    users."${glacier.username}" = import ./modules/home/home.nix;
   };
 
   environment.systemPackages = with pkgs; [
     nano
     cage
     swayosd
-    wireguard-tools
-    protonvpn-gui
-    qemu
-    virt-manager
-    distrobox
   ];
-  virtualisation.libvirtd.enable = true;
+  
+  # Import optional system modules
+  imports = lib.optionals glacier.modules.virtualization [ ./modules/system/virtualization.nix ]
+    ++ lib.optionals glacier.modules.networking [ ./modules/system/networking.nix ]
+    ++ lib.optionals glacier.modules.gaming [ ./modules/system/gaming.nix ]
+    ++ lib.optionals glacier.modules.podman [ ./modules/system/podman.nix ]
+    ++ lib.optionals glacier.modules.flatpak [ ./modules/system/flatpak.nix ];
+  
+  virtualisation.libvirtd.enable = lib.mkDefault false;
   services.udev.packages = [ pkgs.swayosd ];
 
   systemd.services.swayosd-libinput-backend = {
@@ -129,7 +144,7 @@ in
 
   programs.nix-ld.enable = true;
 
-  system.stateVersion = "25.11";
+  system.stateVersion = glacier.stateVersion;
 
   nix.settings.extra-experimental-features = [
     "nix-command"
@@ -137,6 +152,7 @@ in
   ];
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.hostPlatform = glacier.hostPlatform;
 
   hardware.graphics.enable = true;
   hardware.bluetooth.enable = true;
@@ -170,14 +186,16 @@ in
     pulse.enable = true;
   };
 
-  services.flatpak.enable = true;
+  services.flatpak.enable = lib.mkDefault false;
 
-  programs.steam.enable = true;
-  programs.steam.extest.enable = true;
+  programs.steam.enable = lib.mkDefault false;
+  programs.steam.extest.enable = lib.mkDefault false;
 
   virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
+    enable = lib.mkDefault false;
+    dockerCompat = lib.mkDefault false;
   };
 
+
+  hardware.enableRedistributableFirmware = true;
 }

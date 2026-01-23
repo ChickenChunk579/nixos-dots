@@ -40,89 +40,52 @@
   }:
   let
     system = "x86_64-linux";
+    glacier = import ./glacier-config.nix;
+    
+    # Common modules for all systems
+    commonModules = [
+      ./configuration.nix
+      home-manager.nixosModules.home-manager
+      hyprland.nixosModules.default
+    ];
+    
+    # Special args passed to all modules
+    commonSpecialArgs = {
+      inherit hyprland walker nixos-grub-themes;
+    };
+    
+    # Deck-specific modules
+    deckModules = commonModules ++ [
+      ./steam.nix
+      {
+        jovian.devices.steamdeck.enable = true;
+      }
+    ];
+    
+    deckSpecialArgs = commonSpecialArgs // {
+      inherit jovian;
+    };
   in
   {
     nixosConfigurations = {
-      alpha = nixpkgs.lib.nixosSystem {
+      glacier = nixpkgs.lib.nixosSystem {
         inherit system;
-
-        specialArgs = {
-          inherit hyprland walker nixos-grub-themes;
-        };
-
-        modules = [
-          ./configuration.nix
-          ./systems/alpha.nix
-
-          home-manager.nixosModules.home-manager
-          hyprland.nixosModules.default
-        ];
+        specialArgs = commonSpecialArgs;
+        modules = commonModules;
       };
 
-      alpha-deck = nixpkgs.lib.nixosSystem {
+      glacier-deck = nixpkgs.lib.nixosSystem {
         inherit system;
-
-        specialArgs = {
-          inherit hyprland walker jovian;
-        };
-
-        modules = [
-          ./configuration.nix
-          ./systems/alpha.nix
-          ./steam.nix
-
-          home-manager.nixosModules.home-manager
-          hyprland.nixosModules.default
-        ];
-      };
-
-      beta = nixpkgs.lib.nixosSystem {
-        inherit system;
-
-        specialArgs = {
-          inherit hyprland walker;
-        };
-
-        modules = [
-          ./configuration.nix
-          ./systems/beta.nix
-
-          home-manager.nixosModules.home-manager
-          hyprland.nixosModules.default
-        ];
-      };
-
-      beta-deck = nixpkgs.lib.nixosSystem {
-        inherit system;
-
-        specialArgs = {
-          inherit hyprland walker jovian;
-        };
-
-        modules = [
-          ./configuration.nix
-          ./systems/beta.nix
-          ./steam.nix
-          {
-            jovian.devices.steamdeck.enable = true;
-          }
-
-          home-manager.nixosModules.home-manager
-          hyprland.nixosModules.default
-        ];
+        specialArgs = deckSpecialArgs;
+        modules = deckModules;
       };
 
       installer = nixpkgs.lib.nixosSystem {
         inherit system;
-
-        specialArgs = {
-          inherit hyprland walker;
-        };
-
+        specialArgs = commonSpecialArgs;
         modules = [
           ./installer.nix
           "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-
           home-manager.nixosModules.home-manager
           hyprland.nixosModules.default
         ];
