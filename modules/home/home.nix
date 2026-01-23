@@ -43,6 +43,9 @@
       bottles
       zafiro-icons
       mpv
+      gimp
+      clang
+      clang-tools
     ];
     username = "rhys";
     homeDirectory = "/home/rhys";

@@ -111,6 +111,22 @@
           hyprland.nixosModules.default
         ];
       };
+
+      installer = nixpkgs.lib.nixosSystem {
+        inherit system;
+
+        specialArgs = {
+          inherit hyprland walker;
+        };
+
+        modules = [
+          ./installer.nix
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+
+          home-manager.nixosModules.home-manager
+          hyprland.nixosModules.default
+        ];
+      };
     };
   };
 }
