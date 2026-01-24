@@ -2,16 +2,57 @@
 
 let
   installerScript = pkgs.writeShellScript "installer-script" ''
+    #!/usr/bin/env bash
     set -euo pipefail
 
-    clear
+    # ===== ANSI Helpers =====
+    ESC="\033"
+    RESET="''${ESC}[0m"
+    BOLD="''${ESC}[1m"
+    DIM="''${ESC}[2m"
 
+    RED="''${ESC}[31m"
+    GREEN="''${ESC}[32m"
+    YELLOW="''${ESC}[33m"
+    BLUE="''${ESC}[34m"
+    MAGENTA="''${ESC}[35m"
+    CYAN="''${ESC}[36m"
+    GRAY="''${ESC}[90m"
+
+    hr() {
+      printf "''${GRAY}%*s''${RESET}\n" "$(tput cols)" "" | tr ' ' '─'
+    }
+
+    section() {
+      clear
+      hr
+      printf "''${BOLD}''${CYAN}  %s''${RESET}\n" "$1"
+      hr
+      echo
+    }
+
+    typewriter() {
+      while IFS= read -r -n1 c; do
+        printf "%s" "$c"
+        sleep 0.005
+      done
+      echo
+    }
+
+    # ===== Intro =====
+    clear
     toilet GlacierOS --metal -f bigmono9
 
-    echo "Welcome to the GlacierOS Installer!"
+    echo
+    gum style \
+      --border rounded \
+      --border-foreground cyan \
+      --padding "1 4" \
+      --align center \
+      "Welcome to the GlacierOS Installer"
 
     CHOICE=$(gum choose \
-      --header "What next?" \
+      --header "Select an option:" \
       "Install" \
       "Recovery Shell")
 
@@ -25,8 +66,8 @@ let
         ;;
     esac
 
-
-    echo "(1/?) User setup"
+    # ===== 1. User Setup =====
+    section "1/10 - User Setup"
     USERNAME=$(gum input --prompt "Username: " --placeholder "your username")
     FULLNAME=$(gum input --prompt "Full name: " --placeholder "Your Full Name")
     PASSWORD=$(gum input --prompt "Password: " --placeholder "your password" --password)
@@ -37,293 +78,199 @@ let
       exit 1
     fi
 
-    echo "(2/?) Disk"
+    # ===== 2. Disk Selection =====
+    section "2/10 - Disk Selection"
     DISKS=$(lsblk -dno NAME,TYPE | grep disk | awk '{print $1}')
     DISK=$(echo "$DISKS" | gum choose --header "Select the target disk for installation:")
-    echo "Selected disk: /dev/$DISK"
+    gum style --foreground 2 "Selected disk: /dev/$DISK"
 
-    echo "(3/?) Network"
+    # ===== 3. Network Setup =====
+    section "3/10 - Network Setup"
     NET_TYPE=$(gum choose \
-    "Ethernet (DHCP)" \
-    "Wi-Fi" \
-    "Skip networking")
+      "Ethernet (DHCP)" \
+      "Wi-Fi" \
+      "Skip networking")
 
     case "$NET_TYPE" in
-    "Ethernet (DHCP)")
-        echo "Configuring Ethernet..."
+      "Ethernet (DHCP)")
+        gum style --foreground 2 "Configuring Ethernet..."
         nmcli networking on
         nmcli device set eth0 managed yes 2>/dev/null || true
         nmcli device connect eth0 2>/dev/null || true
-        gum spin --spinner dot --title "Waiting for network..." -- sleep 3
+        gum spin --spinner "pulse" --title "Waiting for network..." -- sleep 3
         ;;
-
-    "Wi-Fi")
+      "Wi-Fi")
         nmcli networking on
-
         WIFI_DEV=$(nmcli -t -f DEVICE,TYPE device status | awk -F: '$2=="wifi"{print $1; exit}')
         if [ -z "$WIFI_DEV" ]; then
-        gum style --foreground 1 "No Wi-Fi device found!"
-        exit 1
+          gum style --foreground 1 "No Wi-Fi device found!"
+          exit 1
         fi
-
-        echo "Scanning Wi-Fi networks..."
+        gum style --foreground 2 "Scanning Wi-Fi networks..."
         nmcli device wifi rescan ifname "$WIFI_DEV"
         sleep 2
-
         WIFI_SSID=$(nmcli -t -f IN-USE,SSID,SECURITY,SIGNAL device wifi list ifname "$WIFI_DEV" \
-        | sed '/^:/d' \
-        | gum choose --header "Select Wi-Fi network")
-
+          | sed '/^:/d' \
+          | gum choose --header "Select Wi-Fi network")
         SSID=$(echo "$WIFI_SSID" | cut -d: -f2)
         SEC=$(echo "$WIFI_SSID" | cut -d: -f3)
-
         if [ "$SEC" != "--" ]; then
-        WIFI_PASS=$(gum input --prompt "Wi-Fi password: " --password)
-        nmcli device wifi connect "$SSID" password "$WIFI_PASS" ifname "$WIFI_DEV"
+          WIFI_PASS=$(gum input --prompt "Wi-Fi password: " --password)
+          nmcli device wifi connect "$SSID" password "$WIFI_PASS" ifname "$WIFI_DEV"
         else
-        nmcli device wifi connect "$SSID" ifname "$WIFI_DEV"
+          nmcli device wifi connect "$SSID" ifname "$WIFI_DEV"
         fi
         ;;
-
-    "Skip networking")
-        echo "Skipping network configuration."
+      "Skip networking")
+        gum style --foreground 3 "Skipping network configuration."
         ;;
     esac
 
-    # Hostname
-    HOSTNAME=$(gum input \
-    --prompt "Hostname: " \
-    --value "$(hostname)")
+    # ===== 4. Hostname =====
+    section "4/10 - Hostname"
+    HOSTNAME=$(gum input --prompt "Hostname: " --value "$(hostname)")
 
-    echo "(4/?) Timezone"
-
-    # List regions (Africa, America, Europe, etc.)
-    REGION=$(ls /etc/zoneinfo \
-    | grep -vE '^(posix|right|Etc)$' \
-    | gum choose --header "Select your region")
-
-    # List cities for the chosen region
-    CITY=$(ls "/etc/zoneinfo/$REGION" \
-    | gum choose --header "Select your city")
-
+    # ===== 5. Timezone =====
+    section "5/10 - Timezone"
+    REGION=$(ls /etc/zoneinfo | grep -vE '^(posix|right|Etc)$' | gum choose --header "Select your region")
+    CITY=$(ls "/etc/zoneinfo/$REGION" | gum choose --header "Select your city")
     TIMEZONE="$REGION/$CITY"
+    gum style --foreground 2 "Selected timezone: $TIMEZONE"
 
-    echo "Selected timezone: $TIMEZONE"
-
-    echo "(5/?) Hardware Detection"
-    
-    # Detect CPU
+    # ===== 6. Hardware Detection =====
+    section "6/10 - Hardware Detection"
     CPU_TYPE=$(grep -o "intel\|amd" /proc/cpuinfo | head -1 || echo "intel")
-    echo "Detected CPU: $CPU_TYPE"
     CPU_KERNEL_MOD="kvm-$CPU_TYPE"
-    
-    # Detect GPU
     GPU_TYPE=""
-    if lspci | grep -qi nvidia; then
-      GPU_TYPE="nvidia"
-    elif lspci | grep -qi amd; then
-      GPU_TYPE="amd"
-    elif lspci | grep -qi "intel.*graphics"; then
-      GPU_TYPE="intel"
-    fi
-    echo "Detected GPU: ''${GPU_TYPE:-integrated}"
+    if lspci | grep -qi nvidia; then GPU_TYPE="nvidia"; 
+    elif lspci | grep -qi amd; then GPU_TYPE="amd";
+    elif lspci | grep -qi "intel.*graphics"; then GPU_TYPE="intel"; fi
+    gum style --foreground 2 "Detected CPU: $CPU_TYPE"
+    gum style --foreground 2 "Detected GPU: ''${GPU_TYPE:-integrated}"
 
-    echo "(6/?) Starting installation"
-    echo "(1/3) Partitioning disk"
-
+    # ===== 7. Partitioning Disk =====
+    section "7/10 - Partitioning Disk"
     TARGET_DISK="/dev/$DISK"
-
-    # Show current disk layout
-    echo "Current partitions on $TARGET_DISK:"
+    gum style --foreground 2 "Current partitions on $TARGET_DISK:"
     lsblk "$TARGET_DISK"
     echo
-
-    # Preview what will happen (example)
     PARTITION_PLAN="
     $TARGET_DISK will be wiped and repartitioned as:
     - EFI System Partition: 512M
+    - Swap Partition: 4G
     - Root Partition: remaining space
     "
+    gum style --foreground 3 "$PARTITION_PLAN"
+    if ! gum confirm "Proceed with this partitioning?" --default=false; then
+      gum style --foreground 1 "Partitioning canceled. Exiting."
+      exit 1
+    fi
 
-    echo "$PARTITION_PLAN"
-
-    # Confirm with gum
-    if gum confirm "Do you want to proceed with this partitioning?" --default=false; then
-    echo "User confirmed. Proceeding with partitioning..."
-    
-    wipefs -a "$TARGET_DISK"
-    parted "$TARGET_DISK" mklabel gpt
-
-    parted -a optimal "$TARGET_DISK" mkpart ESP fat32 1MiB 2049MiB
-    parted "$TARGET_DISK" set 1 boot on
-    parted -a optimal "$TARGET_DISK" mkpart primary linux-swap 2049MiB 6145MiB
-    parted -a optimal "$TARGET_DISK" mkpart primary btrfs 6145MiB 100%
+    gum spin --spinner "pulse" --title "Wiping and partitioning disk..." -- bash -c "
+      wipefs -a '$TARGET_DISK'
+      parted '$TARGET_DISK' mklabel gpt
+      parted -a optimal '$TARGET_DISK' mkpart ESP fat32 1MiB 2049MiB
+      parted '$TARGET_DISK' set 1 boot on
+      parted -a optimal '$TARGET_DISK' mkpart primary linux-swap 2049MiB 6145MiB
+      parted -a optimal '$TARGET_DISK' mkpart primary btrfs 6145MiB 100%
+    "
 
     EFI_PART="''${TARGET_DISK}1"
     SWAP_PART="''${TARGET_DISK}2"
     BTRFS_PART="''${TARGET_DISK}3"
 
-    echo "Formatting EFI as FAT32..."
-    mkfs.fat -F32 "$EFI_PART"
+    gum spin --spinner "pulse" --title "Formatting partitions..." -- bash -c "
+      mkfs.fat -F32 '$EFI_PART'
+      mkswap '$SWAP_PART'
+      mkfs.btrfs -f '$BTRFS_PART'
+    "
 
-    echo "Setting up swap..."
-    mkswap "$SWAP_PART"
-
-    echo "Formatting root as Btrfs..."
-    mkfs.btrfs -f "$BTRFS_PART"
-    
-    else
-    echo "Partitioning canceled by user. Exiting installer."
-    exit 1
-    fi
-
-    echo "(2/3) Mounting filesystems"
-    mount ''${TARGET_DISK}3 /mnt
+    # ===== 8. Mount Filesystems =====
+    section "8/10 - Mounting Filesystems"
+    mount "$BTRFS_PART" /mnt
     mkdir -p /mnt/boot
-    mount ''${TARGET_DISK}1 /mnt/boot
-    swapon ''${TARGET_DISK}2
+    mount "$EFI_PART" /mnt/boot
+    swapon "$SWAP_PART"
 
-    echo "(3/3) Cloning configuration and generating glacier-config.nix"
-
+    # ===== 9. Clone Config & Generate glacier-config.nix =====
+    section "9/10 - Config Setup"
     git clone https://github.com/ChickenChunk579/nixos-dots /mnt/glacieros --depth 1 --branch new
-
-    echo "Generating hardware configuration..."
     mkdir -p /mnt/etc/nixos
     nixos-generate-config --root /mnt
 
-    # Extract device UUIDs
     BOOT_UUID=$(blkid -s UUID -o value "$EFI_PART")
     ROOT_UUID=$(blkid -s UUID -o value "$BTRFS_PART")
     SWAP_UUID=$(blkid -s UUID -o value "$SWAP_PART")
 
-    # Get kernel modules from hardware config - extract the full array syntax
-    INIT_MODULES=$(sed -n \
-      's/.*boot.initrd.availableKernelModules = \[\(.*\)\];/\1/p' \
-      /mnt/etc/nixos/hardware-configuration.nix)
-      
-    rm /mnt/glacieros/glacier-config.nix
+    INIT_MODULES=$(sed -n 's/.*boot.initrd.availableKernelModules = \[\(.*\)\];/\1/p' /mnt/etc/nixos/hardware-configuration.nix)
 
-    # Generate glacier-config.nix
     cat > /mnt/glacier-config.nix <<EOF
 {
-  # User Configuration
   username = "$USERNAME";
   fullName = "$FULLNAME";
   timezone = "$TIMEZONE";
 
-  # Security Configuration
-  # WARNING: These passwords should NEVER be committed to version control
   password = "";
   rootPassword = "";
 
-  # System Configuration
   hostname = "$HOSTNAME";
 
-  # Hardware Configuration
   hardware = {
     cpu = "$CPU_TYPE";
     gpu = "$GPU_TYPE";
-    
-    # Kernel modules for boot
-    kernelModules = [ "$CPU_KERNEL_MOD" ];
-    
-    # Available kernel modules for initrd
+    kernelModules = ["$CPU_KERNEL_MOD"];
     initrd = {
-      availableKernelModules = [ $INIT_MODULES ];
-      kernelModules = [ ];
+      availableKernelModules = [$INIT_MODULES];
+      kernelModules = [];
     };
-    
-    # Extra module packages (usually empty)
-    extraModulePackages = [ ];
+    extraModulePackages = [];
   };
 
-  # Filesystems Configuration
   fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-uuid/$ROOT_UUID";
-      fsType = "btrfs";
-    };
-    
-    "/boot" = {
-      device = "/dev/disk/by-uuid/$BOOT_UUID";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
+    "/" = { device = "/dev/disk/by-uuid/$ROOT_UUID"; fsType = "btrfs"; };
+    "/boot" = { device = "/dev/disk/by-uuid/$BOOT_UUID"; fsType = "vfat"; options = ["fmask=0022" "dmask=0022"]; };
   };
 
-  # Swap Configuration
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/$SWAP_UUID"; }
-  ];
+  swapDevices = [{ device = "/dev/disk/by-uuid/$SWAP_UUID"; }];
 
-  # Platform Configuration
   hostPlatform = "x86_64-linux";
-
-  # System Version
   stateVersion = "25.11";
 
-  # System Modules - enable/disable optional features
-  # Base modules (always enabled): quickshell, hyprland, walker, firefox, kitty
   modules = {
-    # System-level modules
-    virtualization = false;   # QEMU, virt-manager, distrobox
-    networking = false;       # VPN, networking tools
-    gaming = false;           # Steam
-    podman = false;           # Container runtime
-    flatpak = false;          # Flatpak runtime
-    fonts = false;            # System fonts (noto-fonts, etc)
+    virtualization = false;
+    networking = false;
+    gaming = false;
+    podman = false;
+    flatpak = false;
+    fonts = false;
 
-    # Home-manager modules
-    devTools = false;         # Development tools (neovim, vscode, etc)
-    media = false;            # Media tools (GIMP, OBS, mpv, etc)
-    audio = false;            # Audio tools (Spicetify, etc)
-    productivity = false;     # Productivity apps (Obsidian, etc)
-    gaming_home = false;      # Gaming apps (Godot, osu!, etc)
-    utilities = false;        # Utilities (syncthing, etc)
-    gtkTheme = false;         # GTK theme and icon sets
+    devTools = false;
+    media = false;
+    audio = false;
+    productivity = false;
+    gaming_home = false;
+    utilities = false;
+    gtkTheme = false;
   };
 }
 EOF
 
-    echo "Installing system..."
-    nixos-install --root /mnt --flake /mnt/glacieros#glacier --no-root-passwd
+    # ===== 10. Install System =====
+    section "10/10 - Installing System"
+    nixos-install --impure --root /mnt --flake /mnt/glacieros#glacier --no-root-passwd
 
-    echo "Configuring root password..."
-    nixos-enter --root /mnt -- bash -c "echo 'root:$PASSWORD' | chpasswd"
+    gum spin --spinner "pulse" --title "Configuring passwords..." -- bash -c "
+      nixos-enter --root /mnt -- bash -c \"echo 'root:$PASSWORD' | chpasswd\"
+      nixos-enter --root /mnt -- bash -c \"echo '$USERNAME:$PASSWORD' | chpasswd\"
+    "
 
-    echo "Configuring user password..."
-    nixos-enter --root /mnt -- bash -c "echo '$USERNAME:$PASSWORD' | chpasswd"
-
-    echo "Copying configurations..."
-    nixos-enter --root /mnt -- bash -c "su rhys -c 'cp -r /glacieros ~/glacier'"
-
-    echo "Downloading wallpaper..."
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"mkdir -p ~/Wallpapers && wget -P ~/Wallpapers https://wallpapercave.com/wp/wp12624327.jpg\""
-
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"mv ~/Wallpapers/wp12624327.jpg ~/Wallpapers/glacier.jpg\""
-
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"cd /home/rhys/Wallpapers && ln -s glacier.jpg current.png\""
-
-    echo "Installation complete!"
     gum style --foreground 2 "GlacierOS has been successfully installed!"
-    CHOICE=$(gum choose \
-      "Shutdown" \
-      "Reboot" \
-      "Shell")
 
+    CHOICE=$(gum choose "Shutdown" "Reboot" "Shell")
     case "$CHOICE" in
-      "Shutdown")
-        gum style --foreground 1 "Shutting down..."
-        shutdown now
-        ;;
-      "Reboot")
-        gum style --foreground 3 "Rebooting..."
-        reboot
-        ;;
-      "Drop to shell")
-        gum style --foreground 4 "Dropping to shell."
-        exit 0
-        ;;
+      "Shutdown") shutdown now ;;
+      "Reboot") reboot ;;
+      "Shell") exit 0 ;;
     esac
 
   '';
@@ -333,13 +280,10 @@ in
   boot.loader.grub.device = "/dev/sda";
 
   networking.networkmanager.enable = true;
-
   networking.hostName = "nixos-installer";
   time.timeZone = "UTC";
 
-  users.users.root = {
-    initialHashedPassword = "";
-  };
+  users.users.root = { initialHashedPassword = ""; };
 
   environment.systemPackages = [
     pkgs.fastfetch
@@ -347,9 +291,9 @@ in
     pkgs.gum
     pkgs.fzf
     pkgs.git
+    pkgs.nix-output-monitor
   ];
 
-  ### Add script to global bashrc ###
   environment.interactiveShellInit = ''
     if [ -z "''${INSTALLER_RAN:-}" ]; then
       export INSTALLER_RAN=1
