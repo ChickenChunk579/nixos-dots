@@ -18,7 +18,7 @@
     bind = [
       "$mod, Return, exec, kitty"
       "$mod, Q, killactive"
-      "$mod, Space, exec, walker"
+      "$mod, Space, exec, wofi --show drun"
       "$mod SHIFT, P, exec, qs ipc call shell powerMenu"
       "$mod CTRL, L, exec, qs ipc call shell lock"
       "$mod SHIFT, C, exec, qs ipc call shell controlPanel"

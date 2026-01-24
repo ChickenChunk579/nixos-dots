@@ -186,7 +186,7 @@ let
     rm /tmp/glacieros/glacier-config.nix
 
     # Generate glacier-config.nix
-    cat > /tmp/glacieros/glacier-config.nix <<'EOF'
+    cat > /tmp/glacieros/glacier-config.nix <<EOF
 {
   # User Configuration
   username = "$USERNAME";
@@ -310,6 +310,8 @@ in
 
   services.openssh.enable = false;
   networking.firewall.enable = false;
+
+  image.fileName = "glacier-x86_64-linux.iso";
 
   system.stateVersion = "25.11";
 }

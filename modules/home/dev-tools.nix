@@ -2,7 +2,6 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
-    starship
     gnumake
     nixfmt
     python3

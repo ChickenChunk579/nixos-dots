@@ -2,8 +2,6 @@
   config,
   lib,
   pkgs,
-  hyprland,
-  walker,
   nixos-grub-themes,
   ...
 }:
@@ -23,7 +21,7 @@ let
         [Desktop Entry]
         Name=Hyprland (Custom)
         Comment=Launch Hyprland properly
-        Exec=${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/Hyprland
+        Exec=${pkgs.hyprland}/bin/Hyprland
         Type=Application
         EOF
       '';
@@ -95,10 +93,8 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     sharedModules = [
-
     ];
     extraSpecialArgs = {
-      inherit walker hyprland;
       isDeck = false;
     };
     users."${glacier.username}" = import ./modules/home/home.nix;
@@ -161,11 +157,6 @@ in
 
   programs.hyprland = {
     enable = true;
-
-    # set the flake package
-    package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    # make sure to also set the portal package, so that they are in sync
-    portalPackage = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
 
   services.displayManager.sessionPackages = [ custom-hyprland-session ];

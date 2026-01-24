@@ -1,7 +1,5 @@
 {
   pkgs,
-  walker,
-  hyprland,
   lib,
   ...
 }:
@@ -12,10 +10,8 @@ in
 
 {
   imports = [
-    # Base modules (always enabled)
-    walker.homeManagerModules.default
     ./hyprland/main.nix
-    ./walker.nix
+    ./wofi.nix
     ./quickshell/main.nix
     ./hyprshade/main.nix
     ./hypridle.nix
@@ -29,31 +25,30 @@ in
   ++ (lib.optionals glacier.modules.media [ ./media.nix ])
   ++ (lib.optionals glacier.modules.productivity [ ./productivity.nix ])
   ++ (lib.optionals glacier.modules.gaming_home [ ./gaming.nix ])
-  ++ (lib.optionals glacier.modules.utilities [ ./utilities.nix ]);
+  ++ (lib.optionals glacier.modules.utilities [ ./utilities.nix ])
+  ++ (lib.optionals glacier.modules.gtkTheme [ ./gtk-theme.nix ])
+  ++ [ ./firefox.nix ];  # Firefox always enabled for base
 
   home = {
     # Base packages (always installed)
     packages = with pkgs; [
       # Base Hyprland dependencies
       swww              # Wallpaper manager
-      hyprpaper         # Alternative wallpaper
       hyprlock          # Screen locker
       hypridle          # Idle management
       matugen           # Color scheme generator
-      material-cursors
-      zafiro-icons
       
       # Base applications
       kitty             # Terminal
-      firefox           # Browser
       
       # Color management
       pywal
       
       # Basic utilities
       git
-      material-design-icons
-      roboto
+
+      starship
+      gnumake
     ];
     
     username = glacier.username;
@@ -65,10 +60,6 @@ in
       NIXOS_OZONE_WL = "1";
     };
   };
-
-  gtk.enable = true;
-  gtk.iconTheme.package = pkgs.zafiro-icons;
-  gtk.iconTheme.name = "Zafiro-icons-Dark";
 
   home.file.".bashrc".text = ''
     eval -- "$(/etc/profiles/per-user/${glacier.username}/bin/starship init bash --print-full-init)"
@@ -89,8 +80,6 @@ in
       include ~/.config/kitty/matugen.conf
     '';
   };
-  
-  programs.firefox.enable = true;
 
   systemd.user.services.restart-seatd = {
     Unit = {
