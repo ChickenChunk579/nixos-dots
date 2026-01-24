@@ -297,15 +297,12 @@ EOF
     echo "Copying configurations..."
     nixos-enter --root /mnt -- bash -c "su rhys -c 'cp -r /glacieros ~/glacier'"
 
-    echo "Downloading wallpapers..."
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"mkdir -p ~/Wallpapers && wget -P ~/Wallpapers https://wallpapercave.com/wp/wp10584127.jpg\""
+    echo "Downloading wallpaper..."
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"mkdir -p ~/Wallpapers && wget -P ~/Wallpapers https://wallpapercave.com/wp/wp12624327.jpg\""
 
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"mv ~/Wallpapers/wp10584127.jpg ~/Wallpapers/glacier.jpg\""
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"mv ~/Wallpapers/wp12624327.jpg ~/Wallpapers/glacier.jpg\""
 
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"matugen image ~/Wallpapers/glacier.jpg\""
-
-    echo "Copying generated configs..."
-    cp -r /mnt/glacieros /mnt/glacieros
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"ln -sf /home/rhys/Wallpapers/glacier.jpg /home/rhys/Wallpapers/current.png\""
 
     echo "Installation complete!"
     gum style --foreground 2 "GlacierOS has been successfully installed!"

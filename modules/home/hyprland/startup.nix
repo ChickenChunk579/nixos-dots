@@ -11,5 +11,6 @@
     "swaync"
     "swayosd-server"
     "steam -silent"
+    "matugen image ~/Wallpapers/current.png"
   ];
 }
