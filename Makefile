@@ -30,7 +30,7 @@ test-installed:
 		-drive file=disk.qcow2,format=qcow2 \
 		-netdev user,id=net0,hostfwd=tcp::2222-:22 \
 		-device e1000,netdev=net0 \
-		-device virtio-vga \
+		-device virtio-gpu-pci \
 		-enable-kvm \
 		-cpu host
 

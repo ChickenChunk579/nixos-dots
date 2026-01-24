@@ -10,6 +10,22 @@ let
 
     echo "Welcome to the GlacierOS Installer!"
 
+    CHOICE=$(gum choose \
+      --header "What next?" \
+      "Install" \
+      "Recovery Shell")
+
+    case "$CHOICE" in
+      "Install")
+        gum style --foreground 2 "Continuing installation..."
+        ;;
+      "Recovery Shell")
+        gum style --foreground 3 "Dropping to recovery shell..."
+        exit 0
+        ;;
+    esac
+
+
     echo "(1/?) User setup"
     USERNAME=$(gum input --prompt "Username: " --placeholder "your username")
     FULLNAME=$(gum input --prompt "Full name: " --placeholder "Your Full Name")
@@ -169,24 +185,26 @@ let
 
     echo "(3/3) Cloning configuration and generating glacier-config.nix"
 
-    git clone https://github.com/ChickenChunk579/nixos-dots /tmp/glacieros --depth 1 --branch new
+    git clone https://github.com/ChickenChunk579/nixos-dots /mnt/glacieros --depth 1 --branch new
 
     echo "Generating hardware configuration..."
     mkdir -p /mnt/etc/nixos
     nixos-generate-config --root /mnt
 
     # Extract device UUIDs
-    ROOT_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | grep "/" | head -1 | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
-    BOOT_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | grep "/boot" | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
-    SWAP_UUID=$(grep "device = " /mnt/etc/nixos/hardware-configuration.nix | tail -1 | grep -oP '(?<=/dev/disk/by-uuid/)[^"]+' || echo "REPLACE_WITH_UUID")
+    BOOT_UUID=$(blkid -s UUID -o value "$EFI_PART")
+    ROOT_UUID=$(blkid -s UUID -o value "$BTRFS_PART")
+    SWAP_UUID=$(blkid -s UUID -o value "$SWAP_PART")
 
     # Get kernel modules from hardware config - extract the full array syntax
-    INIT_MODULES=$(grep -A 1 "boot.initrd.availableKernelModules" /mnt/etc/nixos/hardware-configuration.nix | tail -1 | sed 's/.*\[\(.*\)\].*/\1/')
-    
-    rm /tmp/glacieros/glacier-config.nix
+    INIT_MODULES=$(sed -n \
+      's/.*boot.initrd.availableKernelModules = \[\(.*\)\];/\1/p' \
+      /mnt/etc/nixos/hardware-configuration.nix)
+      
+    rm /mnt/glacieros/glacier-config.nix
 
     # Generate glacier-config.nix
-    cat > /tmp/glacieros/glacier-config.nix <<EOF
+    cat > /mnt/glacieros/glacier-config.nix <<EOF
 {
   # User Configuration
   username = "$USERNAME";
@@ -248,35 +266,69 @@ let
   # Base modules (always enabled): quickshell, hyprland, walker, firefox, kitty
   modules = {
     # System-level modules
-    virtualization = true;    # QEMU, virt-manager, distrobox
-    networking = false;        # VPN, networking tools
-    gaming = true;             # Steam
-    podman = false;            # Container runtime
-    flatpak = false;           # Flatpak runtime
+    virtualization = false;   # QEMU, virt-manager, distrobox
+    networking = false;       # VPN, networking tools
+    gaming = false;           # Steam
+    podman = false;           # Container runtime
+    flatpak = false;          # Flatpak runtime
+    fonts = false;            # System fonts (noto-fonts, etc)
 
     # Home-manager modules
-    devTools = true;          # Development tools (neovim, vscode, etc)
-    media = true;             # Media tools (GIMP, OBS, mpv, etc)
-    audio = true;             # Audio tools (Spicetify, etc)
-    productivity = false;      # Productivity apps (Obsidian, etc)
-    gaming_home = false;       # Gaming apps (Godot, osu!, etc)
-    utilities = true;         # Utilities (syncthing, etc)
+    devTools = false;         # Development tools (neovim, vscode, etc)
+    media = false;            # Media tools (GIMP, OBS, mpv, etc)
+    audio = false;            # Audio tools (Spicetify, etc)
+    productivity = false;     # Productivity apps (Obsidian, etc)
+    gaming_home = false;      # Gaming apps (Godot, osu!, etc)
+    utilities = false;        # Utilities (syncthing, etc)
+    gtkTheme = false;         # GTK theme and icon sets
   };
 }
 EOF
 
     echo "Installing system..."
-    nixos-install --root /mnt --flake /tmp/glacieros#glacier --no-root-passwd
+    nixos-install --root /mnt --flake /mnt/glacieros#glacier --no-root-passwd
 
     echo "Configuring root password..."
     nixos-enter --root /mnt -- bash -c "echo 'root:$PASSWORD' | chpasswd"
 
+    echo "Configuring user password..."
+    nixos-enter --root /mnt -- bash -c "echo '$USERNAME:$PASSWORD' | chpasswd"
+
+    echo "Copying configurations..."
+    nixos-enter --root /mnt -- bash -c "su rhys -c 'cp -r /glacieros ~/glacier'"
+
+    echo "Downloading wallpapers..."
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"mkdir -p ~/Wallpapers && wget -P ~/Wallpapers https://wallpapercave.com/wp/wp10584127.jpg\""
+
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"mv ~/Wallpapers/wp10584127.jpg ~/Wallpapers/glacier.jpg\""
+
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"matugen image ~/Wallpapers/glacier.jpg\""
+
     echo "Copying generated configs..."
-    cp -r /tmp/glacieros /mnt/glacieros
+    cp -r /mnt/glacieros /mnt/glacieros
 
     echo "Installation complete!"
     gum style --foreground 2 "GlacierOS has been successfully installed!"
-    gum style "Reboot your system to complete the installation."
+    CHOICE=$(gum choose \
+      "Shutdown" \
+      "Reboot" \
+      "Shell")
+
+    case "$CHOICE" in
+      "Shutdown")
+        gum style --foreground 1 "Shutting down..."
+        shutdown now
+        ;;
+      "Reboot")
+        gum style --foreground 3 "Rebooting..."
+        reboot
+        ;;
+      "Drop to shell")
+        gum style --foreground 4 "Dropping to shell."
+        exit 0
+        ;;
+    esac
+
   '';
 in
 {

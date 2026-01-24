@@ -49,6 +49,7 @@ in
 
       starship
       gnumake
+      wget
     ];
     
     username = glacier.username;
