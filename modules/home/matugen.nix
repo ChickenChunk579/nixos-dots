@@ -44,6 +44,10 @@
     input_path = '~/.config/matugen/templates/vscode.json'
     output_path = '~/.config/Code/User/settings.json'
 
+    [templates.mango]
+    input_path = '~/.config/matugen/templates/mango.conf'
+    output_path = '~/.config/mango/matugen.conf'
+
   '';
 
   home.file.".config/matugen/templates/quickshell.json".text = ''
@@ -232,5 +236,31 @@
     @define-color sidebar_fg_color @window_fg_color;
     @define-color sidebar_border_color @window_bg_color;
     @define-color sidebar_backdrop_color @window_bg_color;
+  '';
+
+  home.file.".config/matugen/templates/mango.conf".text = ''
+    # Cor do fundo do ecrã
+    rootcolor={{colors.background.dark.hex_stripped}}ff
+
+    # Cor da borda para janelas inativas
+    bordercolor={{colors.outline_variant.dark.hex_stripped}}ff
+
+    # Cor da borda para a janela em foco
+    focuscolor={{colors.primary_container.dark.hex_stripped}}ff
+
+    # Cor para janelas maximizadas
+    maxmizescreencolor={{colors.secondary.dark.hex_stripped}}ff
+
+    # Cor para janelas urgentes
+    urgentcolor={{colors.error.dark.hex_stripped}}ff
+
+    # Cor para o scratchpad
+    scratchpadcolor={{colors.tertiary.dark.hex_stripped}}ff
+
+    # Cor para janelas globais
+    globalcolor={{colors.secondary_container.dark.hex_stripped}}ff
+
+    # Cor para janelas em modo overlay
+    overlaycolor={{colors.tertiary_container.dark.hex_stripped}}ff
   '';
 }

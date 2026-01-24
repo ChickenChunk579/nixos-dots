@@ -1,10 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, glacier, ... }:
+let
+  # Determine which panel file to read based on the window manager
+  panelFile = 
+    if glacier.programs.windowManager == "hyprland" then ./panel-hypr.qml
+    else if glacier.programs.windowManager == "mangowc" then ./panel-mango.qml
+    else ./panel.qml; # Default fallback
+in
 {
   home.packages = with pkgs; [
     quickshell
   ];
 
+  home.file.".config/quickshell/DwlService.qml".source = ./DwlService.qml;
+
   home.file.".config/quickshell/shell.qml".text = ''
+    import "DwlService.qml" as DwlService
+
     import Quickshell
     import Quickshell.Hyprland
     import Quickshell.Wayland
@@ -125,7 +136,7 @@
         implicitHeight: panelHeight
         color: "transparent"
 
-        ${builtins.readFile ./panel.qml}
+        ${builtins.readFile panelFile}
 
         Loader {
             id: uiLoader

@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  mango,
   ...
 }:
 
@@ -9,8 +10,8 @@ let
 in
 
 {
+  _module.args = { inherit glacier; };
   imports = [
-    ./hyprland/main.nix
     ./wofi.nix
     ./quickshell/main.nix
     ./hyprshade/main.nix
@@ -18,6 +19,7 @@ in
     ./nixwal.nix
     ./fastfetch.nix
     ./matugen.nix
+    mango.hmModules.mango
   ]
   # Optional home-manager modules
   ++ (lib.optionals glacier.modules.audio [ ./audio.nix ])
@@ -27,6 +29,8 @@ in
   ++ (lib.optionals glacier.modules.gaming_home [ ./gaming.nix ])
   ++ (lib.optionals glacier.modules.utilities [ ./utilities.nix ])
   ++ (lib.optionals glacier.modules.gtkTheme [ ./gtk-theme.nix ])
+  ++ (lib.optionals (glacier.programs.windowManager == "mangowc") [ ./mangowc/main.nix ])
+  ++ (lib.optionals (glacier.programs.windowManager == "hyprland") [ ./hyprland/main.nix ])
   ++ [ ./firefox.nix ];  # Firefox always enabled for base
 
   home = {

@@ -3,6 +3,7 @@
   lib,
   pkgs,
   nixos-grub-themes,
+  mango,
   ...
 }:
 
@@ -96,6 +97,7 @@ in
     ];
     extraSpecialArgs = {
       isDeck = false;
+      inherit mango;
     };
     users."${glacier.username}" = import ./modules/home/home.nix;
   };
@@ -155,9 +157,12 @@ in
 
   services.blueman.enable = true;
 
-  programs.hyprland = {
-    enable = true;
-  };
+  programs.hyprland.enable =
+    lib.mkIf (glacier.programs.windowManager == "hyprland") true;
+
+  programs.mango.enable =
+    lib.mkIf (glacier.programs.windowManager == "mangowc") true;
+
 
   services.displayManager.sessionPackages = [ custom-hyprland-session ];
 

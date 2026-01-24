@@ -14,6 +14,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mango = {
+      url = "github:DreamMaoMao/mango";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     nixos-grub-themes.url = "github:jeslie0/nixos-grub-themes";
   };
@@ -23,6 +28,7 @@
     nixpkgs,
     home-manager,
     jovian,
+    mango,
     spicetify-nix,
     nixos-grub-themes,
   }:
@@ -34,11 +40,12 @@
     commonModules = [
       ./configuration.nix
       home-manager.nixosModules.home-manager
+      mango.nixosModules.mango
     ];
     
     # Special args passed to all modules
     commonSpecialArgs = {
-      inherit nixos-grub-themes;
+      inherit nixos-grub-themes mango;
     };
     
     # Deck-specific modules
