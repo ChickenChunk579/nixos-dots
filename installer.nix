@@ -302,7 +302,7 @@ EOF
 
     nixos-enter --root /mnt -- bash -c "su rhys -c \"mv ~/Wallpapers/wp12624327.jpg ~/Wallpapers/glacier.jpg\""
 
-    nixos-enter --root /mnt -- bash -c "su rhys -c \"ln -sf /home/rhys/Wallpapers/glacier.jpg /home/rhys/Wallpapers/current.png\""
+    nixos-enter --root /mnt -- bash -c "su rhys -c \"cd /home/rhys/Wallpapers && ln -s glacier.jpg current.png\""
 
     echo "Installation complete!"
     gum style --foreground 2 "GlacierOS has been successfully installed!"
