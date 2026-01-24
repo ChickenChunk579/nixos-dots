@@ -5,7 +5,7 @@
 }:
 
 let
-  glacier = import ../../glacier-config.nix;
+  glacier = import /glacier-config.nix;
 in
 
 {
