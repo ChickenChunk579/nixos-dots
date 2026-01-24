@@ -24,7 +24,7 @@
     home-manager,
     jovian,
     spicetify-nix,
-    nixos-grub-themes
+    nixos-grub-themes,
   }:
   let
     system = "x86_64-linux";

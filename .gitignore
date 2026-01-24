@@ -2,3 +2,4 @@
 disk.qcow2
 result/
 glacier-config.nix
+system.txt
