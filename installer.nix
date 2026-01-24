@@ -204,7 +204,7 @@ let
     rm /mnt/glacieros/glacier-config.nix
 
     # Generate glacier-config.nix
-    cat > /mnt/glacieros/glacier-config.nix <<EOF
+    cat > /mnt/glacier-config.nix <<EOF
 {
   # User Configuration
   username = "$USERNAME";

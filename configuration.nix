@@ -7,7 +7,7 @@
 }:
 
 let
-  glacier = import ./glacier-config.nix;
+  glacier = import /glacier-config.nix;
   
   # This defines the custom entry with the required metadata
   custom-hyprland-session =
