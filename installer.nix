@@ -301,6 +301,17 @@ in
     fi
   '';
 
+
+  boot.initrd.availableKernelModules = [ 
+    "xhci_pci"     # USB 3.0
+    "usb_storage"  # Standard USB sticks
+    "uas"          # USB Attached SCSI (faster modern drives)
+    "sd_mod"       # SCSI disk support (USB drives often appear as /dev/sdX)
+    "nvme"         # If booting from internal NVMe during install
+    "ahci"         # Standard SATA controllers
+  ];
+
+  
   services.openssh.enable = false;
   networking.firewall.enable = false;
 
