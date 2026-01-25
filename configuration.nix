@@ -4,12 +4,11 @@
   pkgs,
   nixos-grub-themes,
   mango,
+  glacier,
   ...
 }:
 
 let
-  glacier = import /glacier-config.nix;
-  
   # This defines the custom entry with the required metadata
   custom-hyprland-session =
     pkgs.runCommand "custom-hyprland-session"

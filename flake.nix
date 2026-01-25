@@ -34,7 +34,7 @@
   }:
   let
     system = "x86_64-linux";
-    glacier = import ./glacier-config.nix;
+    glacier = import /glacier-config.nix;
     
     # Common modules for all systems
     commonModules = [
@@ -45,7 +45,7 @@
     
     # Special args passed to all modules
     commonSpecialArgs = {
-      inherit nixos-grub-themes mango;
+      inherit nixos-grub-themes mango glacier;
     };
     
     # Deck-specific modules
@@ -59,10 +59,11 @@
     deckSpecialArgs = commonSpecialArgs // {
       inherit jovian;
     };
+  
   in
   {
     nixosConfigurations = {
-      glacier = nixpkgs.lib.nixosSystem {
+      glacier-regular = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = commonSpecialArgs;
         modules = commonModules;

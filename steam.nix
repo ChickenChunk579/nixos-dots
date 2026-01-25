@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, glacier, ... }: {
   imports = [
     (
       # Put the most recent revision here:
@@ -18,7 +18,9 @@
   jovian.steam.autoStart = true;
   jovian.steam.user = "rhys";
   jovian.decky-loader.enable = true;
-  jovian.steam.desktopSession = "hyprland-custom";
+  jovian.steam.desktopSession =
+    lib.mkIf (glacier.programs.windowManager == "hyprland") "hyprland-custom"
+    // lib.mkIf (glacier.programs.windowManager == "mangowc") "mango";
   services.displayManager.sddm.enable = lib.mkForce false;
   
   # Override isDeck to true for deck configurations
