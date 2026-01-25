@@ -47,6 +47,7 @@
     [templates.mango]
     input_path = '~/.config/matugen/templates/mango.conf'
     output_path = '~/.config/mango/matugen.conf'
+    post_hook = 'mmsg -d reload_config'
 
   '';
 

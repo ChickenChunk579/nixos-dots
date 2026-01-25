@@ -19,6 +19,7 @@ in
     ./nixwal.nix
     ./fastfetch.nix
     ./matugen.nix
+    ./scripts.nix
     mango.hmModules.mango
   ]
   # Optional home-manager modules
