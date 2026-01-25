@@ -154,7 +154,7 @@ in
 
   hardware.graphics.enable = true;
   hardware.bluetooth.enable = true;
-
+  programs.dconf.enable = true;
   services.blueman.enable = true;
 
   programs.hyprland.enable =
