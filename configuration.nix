@@ -123,6 +123,11 @@
   programs.seahorse.enable = true;
 
   programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+    zlib
+    openssl
+  ];
 
   system.stateVersion = glacier.stateVersion;
 
@@ -150,6 +155,8 @@
   
   services.gnome.core-apps.enable = lib.mkIf (glacier.programs.windowManager == "gnome") true;
   services.gnome.games.enable = lib.mkIf (glacier.programs.windowManager == "gnome") true;
+
+  services.desktopManager.cosmic.enable = lib.mkIf (glacier.programs.windowManager == "cosmic") true;
 
   services.desktopManager.plasma6.enable = 
     lib.mkIf (glacier.programs.windowManager == "plasma") true;

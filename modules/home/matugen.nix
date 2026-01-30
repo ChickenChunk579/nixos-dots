@@ -73,6 +73,308 @@ in
     output_path = '~/.config/mango/matugen.conf'
     post_hook = 'mmsg -d reload_config'
 
+    [templates.qt-color-scheme]
+    input_path = '~/.config/matugen/templates/Matugen.colors'
+    output_path = '~/.local/share/color-schemes/Matugen.colors'
+
+    [templates.cosmic]
+    input_path = '~/.config/matugen/templates/cosmic_theme.ron'
+    output_path = '~/.config/matugen/themes/matugen_cosmic.theme.ron'
+    post_hook = "~/.config/matugen/templates/cosmic_postprocess.py ~/.config/matugen/themes/matugen_cosmic.theme.ron"
+
+
+  '';
+
+  home.file.".config/matugen/templates/cosmis_postprocess.py".text = ''
+    #!/usr/bin/env python3
+    import re, sys, pathlib
+
+    def normalize_channels(text: str) -> str:
+        # Matches lines like: red: 255, or red: 64.0,
+        pattern = re.compile(r"(red|green|blue|alpha):\s*([0-9]+(?:\.[0-9]+)?)")
+        def repl(m):
+            channel = m.group(1)
+            value = float(m.group(2))
+            # alpha stays either 255 or value; we will convert it to 1.0 if >1 and channel==alpha
+            if channel == 'alpha':
+                return f"{channel}: {1.0 if value > 1 else value}"
+            if value > 1:
+                return f"{channel}: {value/255.0}"
+            return m.group(0)
+        return pattern.sub(repl, text)
+
+    def main():
+        if len(sys.argv) < 2:
+            print("Usage: cosmic_postprocess.py <file>", file=sys.stderr)
+            sys.exit(1)
+        path = pathlib.Path(sys.argv[1]).expanduser()
+        data = path.read_text()
+        new = normalize_channels(data)
+        path.write_text(new)
+
+    if __name__ == '__main__':
+        main()
+  '';
+  home.file.".config/matugen/templates/cosmic_theme.ron".text = ''
+    (
+    palette: Dark((
+        name: "matugen-cosmic-dark",
+        bright_red: (
+            red: {{ colors.error.default.red }},
+            green: {{ colors.error.default.green }},
+            blue: {{ colors.error.default.blue }},
+            alpha: 255.0,
+        ),
+        bright_green: (
+            red: {{ colors.tertiary.default.red }},
+            green: {{ colors.tertiary.default.green }},
+            blue: {{ colors.tertiary.default.blue }},
+            alpha: 255.0,
+        ),
+        bright_orange: (
+            red: {{ colors.secondary.default.red }},
+            green: {{ colors.secondary.default.green }},
+            blue: {{ colors.secondary.default.blue }},
+            alpha: 255.0,
+        ),
+        gray_1: (
+            red: {{ colors.surface_dim.default.red }},
+            green: {{ colors.surface_dim.default.green }},
+            blue: {{ colors.surface_dim.default.blue }},
+            alpha: 255.0,
+        ),
+        gray_2: (
+            red: {{ colors.surface.default.red }},
+            green: {{ colors.surface.default.green }},
+            blue: {{ colors.surface.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_0: (
+            red: 0.0,
+            green: 0.0,
+            blue: 0.0,
+            alpha: 1.0,
+        ),
+        neutral_1: (
+            red: {{ colors.surface_dim.default.red }},
+            green: {{ colors.surface_dim.default.green }},
+            blue: {{ colors.surface_dim.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_2: (
+            red: {{ colors.surface.default.red }},
+            green: {{ colors.surface.default.green }},
+            blue: {{ colors.surface.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_3: (
+            red: {{ colors.surface_container_low.default.red }},
+            green: {{ colors.surface_container_low.default.green }},
+            blue: {{ colors.surface_container_low.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_4: (
+            red: {{ colors.surface_container.default.red }},
+            green: {{ colors.surface_container.default.green }},
+            blue: {{ colors.surface_container.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_5: (
+            red: {{ colors.surface_container_high.default.red }},
+            green: {{ colors.surface_container_high.default.green }},
+            blue: {{ colors.surface_container_high.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_6: (
+            red: {{ colors.surface_container_highest.default.red }},
+            green: {{ colors.surface_container_highest.default.green }},
+            blue: {{ colors.surface_container_highest.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_7: (
+            red: {{ colors.on_surface_variant.default.red }},
+            green: {{ colors.on_surface_variant.default.green }},
+            blue: {{ colors.on_surface_variant.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_8: (
+            red: {{ colors.on_surface.default.red }},
+            green: {{ colors.on_surface.default.green }},
+            blue: {{ colors.on_surface.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_9: (
+            red: {{ colors.surface_bright.default.red }},
+            green: {{ colors.surface_bright.default.green }},
+            blue: {{ colors.surface_bright.default.blue }},
+            alpha: 255.0,
+        ),
+        neutral_10: (
+            red: 1.0,
+            green: 1.0,
+            blue: 1.0,
+            alpha: 1.0,
+        ),
+        accent_blue: (
+            red: {{ colors.primary.default.red }},
+            green: {{ colors.primary.default.green }},
+            blue: {{ colors.primary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_indigo: (
+            red: {{ colors.primary.default.red }},
+            green: {{ colors.primary.default.green }},
+            blue: {{ colors.primary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_purple: (
+            red: {{ colors.tertiary.default.red }},
+            green: {{ colors.tertiary.default.green }},
+            blue: {{ colors.tertiary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_pink: (
+            red: {{ colors.secondary.default.red }},
+            green: {{ colors.secondary.default.green }},
+            blue: {{ colors.secondary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_red: (
+            red: {{ colors.error.default.red }},
+            green: {{ colors.error.default.green }},
+            blue: {{ colors.error.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_orange: (
+            red: {{ colors.secondary.default.red }},
+            green: {{ colors.secondary.default.green }},
+            blue: {{ colors.secondary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_yellow: (
+            red: {{ colors.tertiary.default.red }},
+            green: {{ colors.tertiary.default.green }},
+            blue: {{ colors.tertiary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_green: (
+            red: {{ colors.tertiary.default.red }},
+            green: {{ colors.tertiary.default.green }},
+            blue: {{ colors.tertiary.default.blue }},
+            alpha: 255.0,
+        ),
+        accent_warm_grey: (
+            red: {{ colors.on_surface_variant.default.red }},
+            green: {{ colors.on_surface_variant.default.green }},
+            blue: {{ colors.on_surface_variant.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_warm_grey: (
+            red: {{ colors.outline.default.red }},
+            green: {{ colors.outline.default.green }},
+            blue: {{ colors.outline.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_orange: (
+            red: {{ colors.secondary.default.red }},
+            green: {{ colors.secondary.default.green }},
+            blue: {{ colors.secondary.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_yellow: (
+            red: {{ colors.tertiary.default.red }},
+            green: {{ colors.tertiary.default.green }},
+            blue: {{ colors.tertiary.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_blue: (
+            red: {{ colors.primary.default.red }},
+            green: {{ colors.primary.default.green }},
+            blue: {{ colors.primary.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_purple: (
+            red: {{ colors.tertiary.default.red }},
+            green: {{ colors.tertiary.default.green }},
+            blue: {{ colors.tertiary.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_pink: (
+            red: {{ colors.secondary.default.red }},
+            green: {{ colors.secondary.default.green }},
+            blue: {{ colors.secondary.default.blue }},
+            alpha: 255.0,
+        ),
+        ext_indigo: (
+            red: {{ colors.primary.default.red }},
+            green: {{ colors.primary.default.green }},
+            blue: {{ colors.primary.default.blue }},
+            alpha: 255.0,
+        ),
+    )),
+    spacing: (
+        space_none: 0,
+        space_xxxs: 4,
+        space_xxs: 8,
+        space_xs: 12,
+        space_s: 16,
+        space_m: 24,
+        space_l: 32,
+        space_xl: 48,
+        space_xxl: 64,
+        space_xxxl: 128,
+    ),
+    corner_radii: (
+        radius_0: (0.0, 0.0, 0.0, 0.0),
+        radius_xs: (4.0, 4.0, 4.0, 4.0),
+        radius_s: (8.0, 8.0, 8.0, 8.0),
+        radius_m: (16.0, 16.0, 16.0, 16.0),
+        radius_l: (32.0, 32.0, 32.0, 32.0),
+        radius_xl: (160.0, 160.0, 160.0, 160.0),
+    ),
+    neutral_tint: Some((
+        red: {{ colors.surface_container_high.default.red }},
+        green: {{ colors.surface_container_high.default.green }},
+        blue: {{ colors.surface_container_high.default.blue }},
+    )),
+    bg_color: Some((
+        red: {{ colors.surface.default.red }},
+        green: {{ colors.surface.default.green }},
+        blue: {{ colors.surface.default.blue }},
+        alpha: 0.6,
+    )),
+    primary_container_bg: None,
+    secondary_container_bg: None,
+    text_tint: Some((
+        red: {{ colors.on_surface.default.red }},
+        green: {{ colors.on_surface.default.green }},
+        blue: {{ colors.on_surface.default.blue }},
+    )),
+    accent: Some((
+        red: {{ colors.primary.default.red }},
+        green: {{ colors.primary.default.green }},
+        blue: {{ colors.primary.default.blue }},
+    )),
+    success: Some((
+        red: {{ colors.tertiary.default.red }},
+        green: {{ colors.tertiary.default.green }},
+        blue: {{ colors.tertiary.default.blue }},
+    )),
+    warning: Some((
+        red: {{ colors.secondary.default.red }},
+        green: {{ colors.secondary.default.green }},
+        blue: {{ colors.secondary.default.blue }},
+    )),
+    destructive: Some((
+        red: {{ colors.error.default.red }},
+        green: {{ colors.error.default.green }},
+        blue: {{ colors.error.default.blue }},
+    )),
+    is_frosted: true,
+    gaps: (0, 10),
+    active_hint: 2,
+    window_hint: None,
+)
   '';
 
   home.file.".config/matugen/templates/quickshell.json".text = ''
@@ -288,4 +590,55 @@ in
     # Cor para janelas em modo overlay
     overlaycolor={{colors.tertiary_container.dark.hex_stripped}}ff
   '';
+
+  home.file.".config/matugen/templates/Matugen.colors".text = ''
+    [ColorScheme]
+    Name=Matugen
+    ColorSchemeDescription=Dynamic Material You color scheme generated by Matugen
+
+    [Colors:Window]
+    BackgroundNormal={{colors.surface.light.hex}}
+    BackgroundAlternate={{colors.surface_container_low.light.hex}}
+    ForegroundNormal={{colors.on_surface.light.hex}}
+    ForegroundInactive={{colors.on_surface_variant.light.hex}}
+    DecorationFocus={{colors.primary.light.hex}}
+    DecorationHover={{colors.primary_container.light.hex}}
+
+    [Colors:Button]
+    BackgroundNormal={{colors.surface_container.light.hex}}
+    BackgroundAlternate={{colors.surface_container_high.light.hex}}
+    ForegroundNormal={{colors.on_surface.light.hex}}
+    ForegroundInactive={{colors.on_surface_variant.light.hex}}
+    DecorationFocus={{colors.primary.light.hex}}
+    DecorationHover={{colors.primary_container.light.hex}}
+
+    [Colors:Selection]
+    BackgroundNormal={{colors.primary.light.hex}}
+    BackgroundAlternate={{colors.secondary.light.hex}}
+    ForegroundNormal={{colors.on_primary.light.hex}}
+    ForegroundInactive={{colors.on_secondary.light.hex}}
+    DecorationFocus={{colors.primary.light.hex}}
+    DecorationHover={{colors.primary_container.light.hex}}
+
+    [Colors:Tooltip]
+    BackgroundNormal={{colors.surface_container_high.light.hex}}
+    BackgroundAlternate={{colors.surface_container.light.hex}}
+    ForegroundNormal={{colors.on_surface.light.hex}}
+    ForegroundInactive={{colors.on_surface_variant.light.hex}}
+    DecorationFocus={{colors.primary.light.hex}}
+    DecorationHover={{colors.primary_container.light.hex}}
+
+    [Colors:View]
+    BackgroundNormal={{colors.surface.light.hex}}
+    BackgroundAlternate={{colors.surface_container_low.light.hex}}
+    ForegroundNormal={{colors.on_surface.light.hex}}
+    ForegroundInactive={{colors.on_surface_variant.light.hex}}
+    DecorationFocus={{colors.primary.light.hex}}
+    DecorationHover={{colors.primary_container.light.hex}}
+
+    [General]
+    ColorScheme=Matugen
+    Name=Matugen
+  '';
 }
+

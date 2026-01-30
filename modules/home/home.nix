@@ -52,10 +52,12 @@ in
       
       # Basic utilities
       git
+      github-cli
 
       starship
       gnumake
       wget
+      kdePackages.qt6ct
     ];
     
     username = glacier.username;
@@ -65,6 +67,7 @@ in
     sessionVariables = {
       EDITOR = "nano";
       NIXOS_OZONE_WL = "1";
+      QT_QPA_PLATFORMTHEME = "qt6ct";
     };
   };
 

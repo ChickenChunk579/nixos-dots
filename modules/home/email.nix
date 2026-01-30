@@ -17,12 +17,15 @@ in
     (mkIf (emailClient == "none") {
       # Empty config, no email client installed
     })
-  ];
 
-  assertions = [
+    # Assertions
     {
-      assertion = (emailClient == "thunderbird" || emailClient == "none");
-      message = "programs.emailClient must be one of: thunderbird, none";
+      assertions = [
+        {
+          assertion = (emailClient == "thunderbird" || emailClient == "none");
+          message = "programs.emailClient must be one of: thunderbird, none";
+        }
+      ];
     }
   ];
 }
