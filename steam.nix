@@ -20,7 +20,8 @@
   jovian.decky-loader.enable = true;
   jovian.steam.desktopSession =
     lib.mkIf (glacier.programs.windowManager == "hyprland") "hyprland-custom"
-    // lib.mkIf (glacier.programs.windowManager == "mangowc") "mango";
+    // lib.mkIf (glacier.programs.windowManager == "mangowc") "mango"
+    // lib.mkIf (glacier.programs.windowManager == "gnome") "gnome";
   services.displayManager.sddm.enable = lib.mkForce false;
   
   # Override isDeck to true for deck configurations

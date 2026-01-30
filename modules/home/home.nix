@@ -58,6 +58,7 @@ in
       gnumake
       wget
       kdePackages.qt6ct
+      localsend
     ];
     
     username = glacier.username;

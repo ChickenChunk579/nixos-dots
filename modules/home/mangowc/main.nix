@@ -2,7 +2,6 @@
 {
   wayland.windowManager.mango = {
     enable = true;
-    systemd = false;
     settings = ''
       bind=Super,Return,kitty
       bind=Super,Space,wofi --show drun
