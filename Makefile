@@ -6,6 +6,7 @@ test:
 switch:
 	sudo nixos-rebuild switch --flake .#$(SYSTEM) --show-trace --impure
 
+
 installer:
 	nix build .#nixosConfigurations.installer.config.system.build.isoImage
 

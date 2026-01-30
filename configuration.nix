@@ -7,25 +7,6 @@
   glacier,
   ...
 }:
-
-let
-  # This defines the custom entry with the required metadata
-  custom-hyprland-session =
-    pkgs.runCommand "custom-hyprland-session"
-      {
-        passthru.providedSessions = [ "hyprland-custom" ];
-      }
-      ''
-        mkdir -p $out/share/wayland-sessions
-        cat <<EOF > $out/share/wayland-sessions/hyprland-custom.desktop
-        [Desktop Entry]
-        Name=Hyprland (Custom)
-        Comment=Launch Hyprland properly
-        Exec=${pkgs.hyprland}/bin/Hyprland
-        Type=Application
-        EOF
-      '';
-in
 {
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
@@ -92,6 +73,7 @@ in
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    backupFileExtension = "hm-bak";
     sharedModules = [
     ];
     extraSpecialArgs = {
@@ -112,7 +94,8 @@ in
     ++ lib.optionals glacier.modules.networking [ ./modules/system/networking.nix ]
     ++ lib.optionals glacier.modules.gaming [ ./modules/system/gaming.nix ]
     ++ lib.optionals glacier.modules.podman [ ./modules/system/podman.nix ]
-    ++ lib.optionals glacier.modules.flatpak [ ./modules/system/flatpak.nix ];
+    ++ lib.optionals glacier.modules.flatpak [ ./modules/system/flatpak.nix ]
+    ++ [ ./modules/system/displayManager.nix ];
   
   virtualisation.libvirtd.enable = lib.mkDefault false;
   services.udev.packages = [ pkgs.swayosd ];
@@ -162,13 +145,14 @@ in
   programs.mango.enable =
     lib.mkIf (glacier.programs.windowManager == "mangowc") true;
 
+  services.desktopManager.gnome.enable = 
+    lib.mkIf (glacier.programs.windowManager == "gnome") true;
+  
+  services.gnome.core-apps.enable = lib.mkIf (glacier.programs.windowManager == "gnome") true;
+  services.gnome.games.enable = lib.mkIf (glacier.programs.windowManager == "gnome") true;
 
-  services.displayManager.sessionPackages = [ custom-hyprland-session ];
-
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
-  };
+  services.desktopManager.plasma6.enable = 
+    lib.mkIf (glacier.programs.windowManager == "plasma") true;
 
   fonts.packages = with pkgs; [
     nerd-fonts.roboto-mono

@@ -4,7 +4,7 @@ let
   panelFile = 
     if glacier.programs.windowManager == "hyprland" then ./panel-hypr.qml
     else if glacier.programs.windowManager == "mangowc" then ./panel-mango.qml
-    else ./panel.qml; # Default fallback
+    else ./panel-hypr.qml; # Default fallback
 in
 {
   home.packages = with pkgs; [

@@ -1,4 +1,28 @@
-{ pkgs, ... }:
+{ pkgs, glacier, ... }:
+
+let
+  isGnome = glacier.programs.windowManager == "gnome";
+
+  wallpaperCommand =
+    if isGnome then
+      "gsettings"
+    else
+      "swww";
+
+  wallpaperArguments =
+    if isGnome then
+      [
+        "set"
+        "org.gnome.desktop.background"
+        "picture-uri"
+      ]
+    else
+      [
+        "img"
+        "--transition-type"
+        "center"
+      ];
+in
 {
   home.packages = with pkgs; [
     matugen
@@ -9,13 +33,13 @@
     version_check = false
 
     [config.wallpaper]
-    command = "swww"
-    arguments = ["img", "--transition-type", "center"]
+    command = "${wallpaperCommand}"
+    arguments = ${builtins.toJSON wallpaperArguments}
     set = true
 
     [templates.gtk3]
     input_path = '~/.config/matugen/templates/gtk.css'
-    output_path = '~/.config/gtk-3.0/gtk.css'
+    output_path = '~/.themes/Matugen/gtk-3.0/gtk.css'
     
     [templates.gtk4]
     input_path = '~/.config/matugen/templates/gtk.css'

@@ -20,6 +20,8 @@ in
     ./fastfetch.nix
     ./matugen.nix
     ./scripts.nix
+    ./gtk-theme.nix
+    ./email.nix
     mango.hmModules.mango
   ]
   # Optional home-manager modules
@@ -29,7 +31,6 @@ in
   ++ (lib.optionals glacier.modules.productivity [ ./productivity.nix ])
   ++ (lib.optionals glacier.modules.gaming_home [ ./gaming.nix ])
   ++ (lib.optionals glacier.modules.utilities [ ./utilities.nix ])
-  ++ (lib.optionals glacier.modules.gtkTheme [ ./gtk-theme.nix ])
   ++ (lib.optionals (glacier.programs.windowManager == "mangowc") [ ./mangowc/main.nix ])
   ++ (lib.optionals (glacier.programs.windowManager == "hyprland") [ ./hyprland/main.nix ])
   ++ [ ./firefox.nix ];  # Firefox always enabled for base
