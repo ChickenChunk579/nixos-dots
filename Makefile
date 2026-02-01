@@ -13,7 +13,7 @@ installer:
 test-installer:
 	qemu-system-x86_64 \
 		-m 8G \
-		-cdrom ./result/iso/nixos-minimal-25.11.20260107.d351d06-x86_64-linux.iso \
+		-cdrom ./result/iso/nixos-25.11.20260107.d351d06-x86_64-linux.iso \
 		-bios ../OVMFbin/OVMF_CODE-pure-efi.fd \
 		-drive file=disk.qcow2,format=qcow2 \
 		-netdev user,id=net0,hostfwd=tcp::2222-:22 \

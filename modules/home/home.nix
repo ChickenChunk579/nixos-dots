@@ -29,11 +29,13 @@ in
   ++ (lib.optionals glacier.modules.devTools [ ./dev-tools.nix ])
   ++ (lib.optionals glacier.modules.media [ ./media.nix ])
   ++ (lib.optionals glacier.modules.productivity [ ./productivity.nix ])
+  ++ (lib.optionals glacier.modules.cad [ ./cad.nix ])
   ++ (lib.optionals glacier.modules.gaming_home [ ./gaming.nix ])
   ++ (lib.optionals glacier.modules.utilities [ ./utilities.nix ])
   ++ (lib.optionals (glacier.programs.windowManager == "mangowc") [ ./mangowc/main.nix ])
   ++ (lib.optionals (glacier.programs.windowManager == "hyprland") [ ./hyprland/main.nix ])
-  ++ [ ./firefox.nix ];  # Firefox always enabled for base
+  ++ (lib.optionals (glacier.programs.browser == "firefox") [ ./firefox.nix ])
+  ++ (lib.optionals (glacier.programs.browser == "chromium") [ ./chromium.nix ]);
 
   home = {
     # Base packages (always installed)
