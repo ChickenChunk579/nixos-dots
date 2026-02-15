@@ -37,7 +37,7 @@ in
   ++ (lib.optionals (glacier.programs.browser == "firefox") [ ./firefox.nix ])
   ++ (lib.optionals (glacier.programs.browser == "chromium") [ ./chromium.nix ])
   ++ (lib.optionals (glacier.programs.matrix == "element") [ ./element.nix ])
-  ++ (lib.optionals (glacier.modules.emulators) [ ./emulators.nix ])
+  ++ (lib.optionals (glacier.modules.emulators) [ ./emulators.nix ]);
 
   home = {
     # Base packages (always installed)

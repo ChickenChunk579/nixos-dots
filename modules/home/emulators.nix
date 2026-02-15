@@ -1,11 +1,12 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs: {
+  home.packages = with pkgs; [
     azahar
-    melonds
+    melonDS
     cemu
     mgba
     nestopia-ue
     skyemu
-  };
+    dolphin-emu
+  ];
 }
