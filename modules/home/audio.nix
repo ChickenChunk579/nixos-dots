@@ -2,6 +2,6 @@
 { pkgs, config, ... }:
 {
   imports = [
-    ./spicetify.nix
+    #./spicetify.nix
   ];
 }

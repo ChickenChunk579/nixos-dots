@@ -25,6 +25,7 @@
       "$mod SHIFT, Space, togglefloating"
       "$mod SHIFT, S, exec, sh -c \"grim -g \\\"$(slurp)\\\" - | wl-copy && notify-send 'Screenshot copied'\""
       "$mod CTRL, S, exec, sh -c \"grim -g \\\"$(slurp)\\\" $HOME/screenshot.png && notify-send 'Screenshot saved'\""
+      "$mod SHIFT, F, fullscreen"
       
       "$mod, mouse_down, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"
       "$mod, mouse_up, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')"

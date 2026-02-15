@@ -8,6 +8,8 @@
     git
     clang
     clang-tools
+    rustc
+    cargo
   ];
 
   programs.neovim.enable = true;

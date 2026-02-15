@@ -82,6 +82,10 @@ in
     output_path = '~/.config/matugen/themes/matugen_cosmic.theme.ron'
     post_hook = "~/.config/matugen/templates/cosmic_postprocess.py ~/.config/matugen/themes/matugen_cosmic.theme.ron"
 
+    [templates.wofi]
+    input_path = '~/.config/matugen/templates/colors.css'
+    output_path = '~/.config/matugen/colors.css'
+
 
   '';
 
@@ -639,6 +643,16 @@ in
     [General]
     ColorScheme=Matugen
     Name=Matugen
+  '';
+
+  home.file.".config/matugen/templates/colors.css".text = ''
+    /*
+    * Css Colors
+    * Generated with Matugen
+    */
+    <* for name, value in colors *>
+        @define-color dark-{{name}} {{value.default.hex}};
+    <* endfor *>
   '';
 }
 

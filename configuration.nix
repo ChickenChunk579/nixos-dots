@@ -25,7 +25,7 @@
   boot = {
     initrd.availableKernelModules = glacier.hardware.initrd.availableKernelModules;
     initrd.kernelModules = glacier.hardware.initrd.kernelModules;
-    kernelModules = glacier.hardware.kernelModules;
+    kernelModules = glacier.hardware.kernelModules ++ ["i2c-dev"];
     extraModulePackages = glacier.hardware.extraModulePackages;
 
     plymouth = {
@@ -87,6 +87,7 @@
     nano
     cage
     swayosd
+    fscrypt-experimental
   ];
   
   # Import optional system modules
@@ -121,6 +122,8 @@
   networking.firewall.enable = false;
   services.gnome.gnome-keyring.enable = true;
   programs.seahorse.enable = true;
+
+  hardware.i2c.enable = true;
 
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
